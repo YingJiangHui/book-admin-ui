@@ -7,9 +7,20 @@ export default defineConfig({
   initialState: {},
   request: {},
   layout: {
-    title: '@umijs/max',
+    title: '图书馆管理系统',
   },
   routes: [
+    { path: '/register', component: './Access', layout: false },
+    {
+      path: '/forget-password',
+      component: './Auth/ForgetPassword',
+      layout: false,
+    },
+    {
+      path: '/login',
+      component: './Auth/Login',
+      layout: false,
+    },
     {
       path: '/',
       redirect: '/home',
@@ -30,5 +41,12 @@ export default defineConfig({
       component: './Table',
     },
   ],
-  npmClient: 'npm',
+  npmClient: 'pnpm',
+  proxy: {
+    '/api': {
+      target: 'http://localhost:8099',
+      changeOrigin: true,
+      // 'pathRewrite': { '^/api' : '' },
+    },
+  },
 });
