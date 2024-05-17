@@ -1,33 +1,20 @@
 import { useLoading } from '@/hooks/useLoading';
-import { LoginReq, postLogin } from '@/services/auth';
+import { resetPassword, resetPasswordReq } from '@/services/auth';
 import { sendValidationCodeEmail } from '@/services/email';
-import { Link, history, useSearchParams } from '@@/exports';
-import { BookTwoTone, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { Link, history } from '@@/exports';
+import { LockOutlined, MailOutlined, SyncOutlined } from '@ant-design/icons';
 import {
   LoginForm,
   ProConfigProvider,
   ProFormCaptcha,
   ProFormText,
-  setAlpha,
 } from '@ant-design/pro-components';
-import { useModel } from '@umijs/max';
 import { Button, Form, message, theme } from 'antd';
-import { CSSProperties, useState } from 'react';
-
-type LoginType = 'phone' | 'account';
+import { useState } from 'react';
 
 export default () => {
   const { token } = theme.useToken();
-  const [loginType, setLoginType] = useState<LoginType>('phone');
-  const [searchParams] = useSearchParams();
-  const userModel = useModel('user');
-  const iconStyles: CSSProperties = {
-    marginInlineStart: '16px',
-    color: setAlpha(token.colorTextBase, 0.2),
-    fontSize: '24px',
-    verticalAlign: 'middle',
-    cursor: 'pointer',
-  };
+
   const [form] = Form.useForm<any>();
 
   const onSendValidCode = async () => {
@@ -37,13 +24,11 @@ export default () => {
     });
     // countDown.start();
   };
-  const [onFinish, loading] = useLoading(async (values: LoginReq) => {
+  const [onFinish, loading] = useLoading(async (values: resetPasswordReq) => {
     console.log(values);
-    const res = await postLogin(values);
-    message.success('登录成功');
-    userModel.setToken(res.data);
-    const redirectTo = searchParams.get('redirectTo');
-    history.replace({ pathname: redirectTo ? redirectTo : '/' });
+    await resetPassword(values);
+    message.success('密码已重置请重新登录');
+    history.replace({ pathname: '/login' });
   });
   const [passwordVisibilityToggle, setPasswordVisibilityToggle] =
     useState(false);
@@ -70,9 +55,10 @@ export default () => {
           form={form}
           onFinish={onFinish}
           logo={
-            <BookTwoTone style={{ fontSize: 44, lineHeight: 44 }} size={36} />
+            <SyncOutlined style={{ fontSize: 44, lineHeight: 44 }} size={36} />
+            // <BookTwoTone style={{ fontSize: 44, lineHeight: 44 }} size={36} />
           }
-          title="图书馆管理后台邀请注册"
+          title="密码重置"
           subTitle="图书馆管理后台"
         >
           <>
@@ -98,14 +84,14 @@ export default () => {
               captchaProps={{
                 size: 'large',
               }}
-              placeholder={'请输入邀请码'}
+              placeholder={'请输入验证码'}
               captchaTextRender={(timing, count) => {
                 if (timing) {
                   return `${count} ${'获取验证码'}`;
                 }
                 return '获取验证码';
               }}
-              name="captcha"
+              name="validationCode"
               rules={[
                 {
                   required: true,

@@ -1,55 +1,57 @@
 import { useLoading } from '@/hooks/useLoading';
-import { LoginReq, postLogin } from '@/services/auth';
-import { history, useSearchParams } from '@@/exports';
+import { postRegister, RegisterReq } from '@/services/auth';
+import { history, Link, useSearchParams } from '@@/exports';
 import { BookTwoTone, LockOutlined, MailOutlined } from '@ant-design/icons';
 import {
   LoginForm,
   ProConfigProvider,
-  ProFormCaptcha,
   ProFormText,
-  setAlpha,
 } from '@ant-design/pro-components';
-import { useModel } from '@umijs/max';
-import { message, theme } from 'antd';
-import { CSSProperties, useState } from 'react';
-
-type LoginType = 'phone' | 'account';
+import { Button, message, theme } from 'antd';
+import { useState } from 'react';
 
 export default () => {
+  const [URLSearchParams] = useSearchParams();
+
   const { token } = theme.useToken();
-  const [loginType, setLoginType] = useState<LoginType>('phone');
-  const [searchParams] = useSearchParams();
-  const userModel = useModel('user');
-  const iconStyles: CSSProperties = {
-    marginInlineStart: '16px',
-    color: setAlpha(token.colorTextBase, 0.2),
-    fontSize: '24px',
-    verticalAlign: 'middle',
-    cursor: 'pointer',
-  };
-  const [onFinish, loading] = useLoading(async (values: LoginReq) => {
-    console.log(values);
-    const res = await postLogin(values);
-    message.success('登录成功');
-    userModel.setToken(res.data);
-    const redirectTo = searchParams.get('redirectTo');
-    history.replace({ pathname: redirectTo ? redirectTo : '/' });
+
+  const [onFinish, loading] = useLoading(async (values: RegisterReq) => {
+    await postRegister(values);
+    message.success('注册成功');
+    history.replace({ pathname: '/login' });
   });
+  const [passwordVisibilityToggle, setPasswordVisibilityToggle] =
+    useState(false);
   return (
     <ProConfigProvider hashed={false}>
       <div
         style={{ backgroundColor: token.colorBgContainer, paddingTop: '10%' }}
       >
         <LoginForm
+          submitter={{
+            render: (p, dom) => (
+              <>
+                <Button
+                  size={'large'}
+                  htmlType={'submit'}
+                  block
+                  type={'primary'}
+                >
+                  注册
+                </Button>
+              </>
+            ),
+          }}
           onFinish={onFinish}
           logo={
             <BookTwoTone style={{ fontSize: 44, lineHeight: 44 }} size={36} />
           }
-          title="图书馆管理后台邀请注册"
+          title="图书管理系统邀请注册"
           subTitle="图书馆管理后台"
         >
           <>
             <ProFormText
+              initialValue={URLSearchParams.get('email')}
               name="email"
               fieldProps={{
                 size: 'large',
@@ -63,35 +65,28 @@ export default () => {
                 },
               ]}
             />
-            <ProFormCaptcha
+            <ProFormText
+              initialValue={URLSearchParams.get('inviteCode')}
+              name="validationCode"
               fieldProps={{
                 size: 'large',
                 prefix: <LockOutlined className={'prefixIcon'} />,
               }}
-              captchaProps={{
-                size: 'large',
-              }}
-              placeholder={'请输入邀请码'}
-              captchaTextRender={(timing, count) => {
-                if (timing) {
-                  return `${count} ${'获取验证码'}`;
-                }
-                return '获取验证码';
-              }}
-              name="captcha"
+              placeholder={'输入邀请码'}
               rules={[
                 {
                   required: true,
-                  message: '请输入验证码！',
+                  message: '请输入邀请码!',
                 },
               ]}
-              onGetCaptcha={async () => {
-                message.success('获取验证码成功！验证码为：1234');
-              }}
             />
             <ProFormText.Password
               name="password"
               fieldProps={{
+                visibilityToggle: {
+                  visible: passwordVisibilityToggle,
+                  onVisibleChange: setPasswordVisibilityToggle,
+                },
                 size: 'large',
                 prefix: <LockOutlined className={'prefixIcon'} />,
                 strengthText:
@@ -130,6 +125,24 @@ export default () => {
                 },
               ]}
             />
+            <ProFormText.Password
+              name="passwordConfirmation"
+              fieldProps={{
+                visibilityToggle: {
+                  visible: passwordVisibilityToggle,
+                  onVisibleChange: setPasswordVisibilityToggle,
+                },
+                size: 'large',
+                prefix: <LockOutlined className={'prefixIcon'} />,
+              }}
+              placeholder={'输入确认密码'}
+              rules={[
+                {
+                  required: true,
+                  message: '请输入确认密码！',
+                },
+              ]}
+            />
           </>
 
           <div
@@ -141,13 +154,9 @@ export default () => {
           >
             {/*<ProFormCheckbox noStyle name="autoLogin"></ProFormCheckbox>*/}
 
-            <a
-            // style={{
-            //   float: 'right',
-            // }}
-            >
-              忘记密码
-            </a>
+            <Link replace to={'/login'}>
+              已有账号？去登录
+            </Link>
           </div>
         </LoginForm>
       </div>

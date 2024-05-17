@@ -9,8 +9,44 @@ export default defineConfig({
   layout: {
     title: '图书馆管理系统',
   },
+  headScripts: [
+    {
+      content: `
+    window._AMapSecurityConfig = {
+          securityJsCode:'1a7f253a897308b74dc0f3d859b7f78f',
+    }`,
+      charset: 'utf-8',
+    },
+  ],
+  scripts: [
+    'https://webapi.amap.com/maps?v=2.0&key=afbb14d219ab8177546eae44a24daa91',
+  ],
+  externals: {
+    AMap: 'window.AMap',
+  },
   routes: [
-    { path: '/register', component: './Access', layout: false },
+    {},
+    {
+      path: '/library',
+      name: '图书馆',
+      routes: [
+        {
+          path: '/library',
+          component: './Library/List',
+          name: '图书馆',
+        },
+        {
+          path: '/library/create',
+          component: './Library/Create',
+        },
+        // {
+        //   path: '/library',
+        //   component: './Library/List',
+        //   name: '图书馆',
+        // },
+      ],
+    },
+    { path: '/register', component: './Auth/Register', layout: false },
     {
       path: '/forget-password',
       component: './Auth/ForgetPassword',

@@ -10,13 +10,12 @@ import {
 } from '@ant-design/pro-components';
 import { Link, useModel } from '@umijs/max';
 import { message, theme } from 'antd';
-import { CSSProperties, useState } from 'react';
+import { CSSProperties } from 'react';
 
 type LoginType = 'phone' | 'account';
 
 export default () => {
   const { token } = theme.useToken();
-  const [loginType, setLoginType] = useState<LoginType>('phone');
   const [searchParams] = useSearchParams();
   const userModel = useModel('user');
   const iconStyles: CSSProperties = {
@@ -44,7 +43,7 @@ export default () => {
           logo={
             <BookTwoTone style={{ fontSize: 44, lineHeight: 44 }} size={36} />
           }
-          title="图书馆管理后台登录"
+          title="图书管理系统登录"
           subTitle="图书馆管理后台"
         >
           <>
@@ -114,10 +113,7 @@ export default () => {
           >
             {/*<ProFormCheckbox noStyle name="autoLogin"></ProFormCheckbox>*/}
 
-            <Link
-              replace
-              to={'/forget-password'}
-            >
+            <Link replace to={'/forget-password'}>
               忘记密码
             </Link>
           </div>
