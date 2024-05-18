@@ -1,7 +1,7 @@
 import { getLibraries } from '@/services/library';
 import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
 import { ActionType, ProTable } from '@ant-design/pro-components';
-import { history } from '@umijs/max';
+import { Link, history } from '@umijs/max';
 import { Button, Dropdown } from 'antd';
 import { useRef } from 'react';
 
@@ -12,7 +12,13 @@ export default () => {
       bordered
       columns={[
         { dataIndex: 'id', valueType: 'indexBorder', title: '编号' },
-        { dataIndex: 'name', title: '图书馆' },
+        {
+          dataIndex: 'name',
+          title: '图书馆',
+          render: (dom, record) => {
+            return <Link to={`/library/detail/${record.id}`}>{dom}</Link>;
+          },
+        },
         {
           dataIndex: 'coords',
           title: '坐标',
@@ -24,10 +30,15 @@ export default () => {
       // actionRef={actionRef}
       cardBordered
       request={async (params, sort, filter) => {
-        const a = await getLibraries().then((res) => ({
-          data: res.data,
-          total: res.data.length,
-        }));
+        const a = await getLibraries()
+          .then((res) => {
+            console.log(res);
+            return res;
+          })
+          .then((res) => ({
+            data: res.data,
+            total: res.data.length,
+          }));
         console.log(a, 'a');
         return a;
       }}

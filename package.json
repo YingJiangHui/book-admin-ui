@@ -8,7 +8,7 @@
     "postinstall": "max setup",
     "prepare": "husky",
     "setup": "max setup",
-    "start": "npm run dev"
+    "start": "pnpm run dev"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",

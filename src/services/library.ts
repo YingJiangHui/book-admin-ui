@@ -11,7 +11,7 @@ export const getLibraries = () =>
     method: 'GET',
   });
 
-export const getLibrary = (params: { id: number }) =>
+export const getLibrary = (params: { id: number | string }) =>
   request<API.Common.Result<API.Library.Instance>>(
     `/api/library/${params.id}`,
     {

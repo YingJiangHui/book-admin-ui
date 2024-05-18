@@ -5,7 +5,9 @@ export default defineConfig({
   access: {},
   model: {},
   initialState: {},
-  request: {},
+  request: {
+    // dataField: 'data',
+  },
   layout: {
     title: '图书馆管理系统',
   },
@@ -31,13 +33,21 @@ export default defineConfig({
       name: '图书馆',
       routes: [
         {
-          path: '/library',
+          path: '/library/list',
           component: './Library/List',
           name: '图书馆',
         },
         {
+          path: '/library/detail/:id',
+          component: './Library/Detail',
+          name: '图书馆详情',
+          //   在侧边栏隐藏
+          hideInMenu: true,
+        },
+        {
           path: '/library/create',
           component: './Library/Create',
+          name: '创建图书馆',
         },
         // {
         //   path: '/library',

@@ -50,5 +50,4 @@ export const request: RequestConfig = {
       };
     },
   ],
-  responseInterceptors: [],
 };
