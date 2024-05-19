@@ -28,34 +28,37 @@ export default defineConfig({
   },
   routes: [
     {},
+    // {
+    //   path: '/library',
+    //   name: '图书馆',
+    //   access: 'canSystemAdmin',
+    //
+    //   routes: [
+    //
+    //     // {
+    //     //   path: '/library',
+    //     //   component: './Library/List',
+    //     //   name: '图书馆',
+    //     // },
+    //   ],
+    // },
     {
       path: '/library',
+      component: './Library/List',
       name: '图书馆',
-      routes: [
-        {
-          path: '/library/list',
-          component: './Library/List',
-          name: '图书馆',
-        },
-        {
-          path: '/library/detail/:id',
-          component: './Library/Detail',
-          name: '图书馆详情',
-          //   在侧边栏隐藏
-          hideInMenu: true,
-        },
-        {
-          path: '/library/create',
-          component: './Library/Create',
-          hideInMenu: true,
-          name: '创建图书馆',
-        },
-        // {
-        //   path: '/library',
-        //   component: './Library/List',
-        //   name: '图书馆',
-        // },
-      ],
+    },
+    {
+      path: '/library/detail/:id',
+      component: './Library/Detail',
+      name: '图书馆详情',
+      //   在侧边栏隐藏
+      hideInMenu: true,
+    },
+    {
+      path: '/library/create',
+      component: './Library/Create',
+      hideInMenu: true,
+      name: '创建图书馆',
     },
     { path: '/register', component: './Auth/Register', layout: false },
     {

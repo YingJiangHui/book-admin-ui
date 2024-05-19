@@ -7,7 +7,7 @@ export default function User() {
     serializer: (value: string) => value,
     deserializer: (value: string) => value,
   });
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<API.User.Current>();
   const setToken = async (t: string) => {
     _setToken(t);
     const res = await getUserInfo();

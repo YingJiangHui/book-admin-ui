@@ -1,5 +1,6 @@
 import { useLoading } from '@/hooks/useLoading';
 import { LoginReq, postLogin } from '@/services/auth';
+import { storage } from '@/utils/store';
 import { history, useSearchParams } from '@@/exports';
 import { BookTwoTone, LockOutlined, MailOutlined } from '@ant-design/icons';
 import {
@@ -17,7 +18,7 @@ type LoginType = 'phone' | 'account';
 export default () => {
   const { token } = theme.useToken();
   const [searchParams] = useSearchParams();
-  const userModel = useModel('user');
+  const initialState = useModel('@@initialState');
   const iconStyles: CSSProperties = {
     marginInlineStart: '16px',
     color: setAlpha(token.colorTextBase, 0.2),
@@ -29,7 +30,8 @@ export default () => {
     console.log(values);
     const res = await postLogin(values);
     message.success('登录成功');
-    userModel.setToken(res.data);
+    storage.set('token', res.data);
+    await initialState.refresh();
     const redirectTo = searchParams.get('redirectTo');
     history.replace({ pathname: redirectTo ? redirectTo : '/' });
   });
