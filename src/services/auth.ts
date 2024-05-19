@@ -40,7 +40,7 @@ export type inviteRegisterReq = {
   roles: API.Role.RoleType[];
 };
 export const sendInviteCode = (params: inviteRegisterReq) =>
-  request('/api/auth/invitation-code', {
+  request('/api/email/invitation-code', {
     data: params,
     method: 'POST',
   });

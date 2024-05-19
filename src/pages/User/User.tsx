@@ -41,8 +41,9 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
         ]}
         // actionRef={actionRef}
         cardBordered
-        params={{ libraryId: props.libraryId, roleName: 'LIBRARY_ADMIN' }}
+        params={{ libraryIds: props.libraryId, roleNames: 'LIBRARY_ADMIN' }}
         request={async (params, sort, filter) => {
+          console.log(params, 'p');
           const res = await getUsers(params);
           return res.data;
         }}
@@ -60,9 +61,7 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
           },
         }}
         rowKey="id"
-        search={{
-          labelWidth: 'auto',
-        }}
+        search={false}
         options={{
           setting: {
             listsHeight: 400,
@@ -95,7 +94,9 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
                 libraryIds: [values.libraryId],
                 roles: [values.role],
               });
+              // actionRef.current?.reload();
               message.success('邀请邮件发送成功');
+              return Promise.resolve();
             }}
             initialValues={{
               libraryId: props.libraryId,
