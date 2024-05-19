@@ -47,6 +47,7 @@ export default defineConfig({
         {
           path: '/library/create',
           component: './Library/Create',
+          hideInMenu: true,
           name: '创建图书馆',
         },
         // {

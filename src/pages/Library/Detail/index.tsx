@@ -1,4 +1,5 @@
 import { CustomAMap } from '@/components/CustomAMap';
+import { UserList } from '@/pages/User/User';
 import { getLibrary } from '@/services/library';
 import { useParams } from '@@/exports';
 import { PageContainer, ProCard } from '@ant-design/pro-components';
@@ -33,7 +34,14 @@ export const LibraryDetail: React.FC<
         {
           tab: '图书馆管理人员',
           key: 'admin',
-          children: <ProCard>管理人员</ProCard>,
+          children: (
+            <ProCard>
+              <UserList
+                roles={['LIBRARY_ADMIN']}
+                libraryId={Number(params.id)}
+              />
+            </ProCard>
+          ),
         },
         {
           tab: '图书馆藏书',
