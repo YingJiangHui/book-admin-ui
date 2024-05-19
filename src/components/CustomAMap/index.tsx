@@ -3,8 +3,7 @@ import {
   ControlPanel,
 } from '@/components/CustomAMap/ControlPanel';
 import { postCreateLibrary } from '@/services/library';
-import { PageContainer } from '@ant-design/pro-components';
-import { Card, Form, message } from 'antd';
+import { Form, message } from 'antd';
 import React, { memo, useEffect, useRef } from 'react';
 /// <reference types="@types/amap-js-api" />
 type props = {};
@@ -64,72 +63,59 @@ export const CustomAMap: React.FC<React.PropsWithChildren<CustomAMapProps>> =
     }, []);
 
     return (
-      <div>
-        <PageContainer
-          // style={{ background: '#fff' }}
-          header={{ title: '创建图书馆' }}
-          // content="请搜索并指定图书馆定位"
+      <div style={{ position: 'relative' }}>
+        <div
+          ref={mapContainerRef}
+          style={{ width: '100%', height: window.innerHeight - 72 - 100 }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            zIndex: 100,
+            top: 16,
+            right: 16,
+            background: '#fff',
+            padding: 12,
+            borderRadius: 5,
+            width: 300,
+          }}
         >
-          <Card>
-            <div style={{ position: 'relative' }}>
-              <div
-                ref={mapContainerRef}
-                style={{ width: '100%', height: window.innerHeight - 72 - 100 }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  zIndex: 100,
-                  top: 16,
-                  right: 16,
-                  background: '#fff',
-                  padding: 12,
-                  borderRadius: 5,
-                  width: 300,
-                }}
-              >
-                <ControlPanel
-                  onFinish={async (values) => {
-                    const [longitude, latitude] = values.coordsDisplay
-                      ?.split(',')
-                      .map(Number);
-                    await postCreateLibrary({
-                      name: values.name,
-                      latitude: latitude,
-                      longitude: longitude,
-                      circumference: values.circumference,
-                    });
-                    message.success('添加成功');
-                    history.back();
-                  }}
-                  form={form}
-                  onChange={(changedValue, values) => {
-                    if (!values?.coords || values?.coords.indexOf(',') === -1) {
-                      return;
-                    }
-                    const center = new AMap.LngLat(
-                      ...(values?.coords.split(',').map(Number) as [
-                        number,
-                        number,
-                      ]),
-                    );
-                    markerInstance.setPosition(center);
-                    circleInstance.setCenter(center);
-                    circleInstance.setRadius(values.circumference);
-                    MapRef.current?.add(markerInstance);
-                    MapRef.current?.add(circleInstance);
-                    MapRef.current?.setCenter(markerInstance.getPosition()!);
-                    // MapRef.current?.zoomIn();
-                    MapRef.current?.setZoom(18);
-                    // form.setFieldsValue({
-                    //   coordsDisplay: values.coords,
-                    // });
-                  }}
-                />
-              </div>
-            </div>
-          </Card>
-        </PageContainer>
+          <ControlPanel
+            onFinish={async (values) => {
+              const [longitude, latitude] = values.coordsDisplay
+                ?.split(',')
+                .map(Number);
+              await postCreateLibrary({
+                name: values.name,
+                latitude: latitude,
+                longitude: longitude,
+                circumference: values.circumference,
+              });
+              message.success('添加成功');
+              history.back();
+            }}
+            form={form}
+            onChange={(changedValue, values) => {
+              if (!values?.coords || values?.coords.indexOf(',') === -1) {
+                return;
+              }
+              const center = new AMap.LngLat(
+                ...(values?.coords.split(',').map(Number) as [number, number]),
+              );
+              markerInstance.setPosition(center);
+              circleInstance.setCenter(center);
+              circleInstance.setRadius(values.circumference);
+              MapRef.current?.add(markerInstance);
+              MapRef.current?.add(circleInstance);
+              MapRef.current?.setCenter(markerInstance.getPosition()!);
+              // MapRef.current?.zoomIn();
+              MapRef.current?.setZoom(18);
+              // form.setFieldsValue({
+              //   coordsDisplay: values.coords,
+              // });
+            }}
+          />
+        </div>
       </div>
     );
   });
