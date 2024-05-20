@@ -1,4 +1,5 @@
 import { CustomAMap } from '@/components/CustomAMap';
+import BookList from '@/pages/Book/Book';
 import { UserList } from '@/pages/User/User';
 import { getLibrary } from '@/services/library';
 import { useParams } from '@@/exports';
@@ -46,7 +47,11 @@ export const LibraryDetail: React.FC<
         {
           tab: '图书馆藏书',
           key: 'book',
-          children: <ProCard>藏书</ProCard>,
+          children: (
+            <ProCard>
+              <BookList libraryId={Number(params.id)} />
+            </ProCard>
+          ),
         },
       ]}
       content={

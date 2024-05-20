@@ -18,3 +18,16 @@ export const getLibrary = (params: { id: number | string }) =>
       method: 'GET',
     },
   );
+
+export const getBooksInLibrary = (
+  params: API.Common.ParamsWithPagination<{ libraryId?: number }>,
+) => {
+  const { libraryId, ...rest } = params;
+  return request<API.Common.Result<API.Library.Instance>>(
+    `/api/library/${libraryId}/books`,
+    {
+      params: rest,
+      method: 'GET',
+    },
+  );
+};

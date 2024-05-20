@@ -60,6 +60,11 @@ export default defineConfig({
       hideInMenu: true,
       name: '创建图书馆',
     },
+    {
+      path: '/category',
+      component: './Category/List',
+      name: '图书分类管理',
+    },
     { path: '/register', component: './Auth/Register', layout: false },
     {
       path: '/forget-password',

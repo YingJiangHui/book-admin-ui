@@ -1,50 +1,48 @@
-import { InviteRegister } from '@/components/FormTemplate/InviteRegister/InviteRegister';
-import { sendInviteCode } from '@/services/auth';
-import { getUsers } from '@/services/user';
+import { BookFormTemplate } from '@/components/FormTemplate/BookTemplate';
+import { createBook } from '@/services/book';
+import { getCategories } from '@/services/categroy';
 import { Link } from '@@/exports';
 import { PlusOutlined } from '@ant-design/icons';
-import { ActionType, ModalForm, ProTable } from '@ant-design/pro-components';
-import { Button, Space, Tag, message } from 'antd';
+import {
+  ActionType,
+  ModalForm,
+  PageContainer,
+  ProTable,
+} from '@ant-design/pro-components';
+import { Button, message } from 'antd';
 import React, { memo, useRef } from 'react';
 
-type props = {
-  roles: API.User.Role[];
-  libraryId: number;
-};
-export type UserListProps = props;
-export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
-  (props) => {
-    const actionRef = useRef<ActionType>();
-    return (
-      <ProTable<API.User.Instance, Parameters<typeof getUsers>[0]>
+type props = {};
+export type CategoryListPageProps = props;
+export const CategoryListPage: React.FC<
+  React.PropsWithChildren<CategoryListPageProps>
+> = memo((props) => {
+  const actionRef = useRef<ActionType>();
+
+  return (
+    <PageContainer ghost header={{ title: '图书分类' }}>
+      <ProTable<API.Category.Instance>
         bordered
         columns={[
           { dataIndex: 'id', title: '编号' },
           {
-            dataIndex: 'email',
-            title: '账号',
+            dataIndex: 'title',
+            title: '名称',
             render: (dom, record) => {
               return <Link to={`/library/detail/${record.id}`}>{dom}</Link>;
             },
           },
           {
-            dataIndex: 'roles',
-            title: '角色',
-            render: (_, record) => (
-              <Space size={'small'}>
-                {record.roles.map((role) => (
-                  <Tag key={role.id}>{role.description}</Tag>
-                ))}
-              </Space>
-            ),
+            dataIndex: 'description',
+            title: '描述',
           },
         ]}
         // actionRef={actionRef}
         cardBordered
-        params={{ libraryIds: props.libraryId, roleNames: 'LIBRARY_ADMIN' }}
+        // params={{ libraryId: libraryId }}
         request={async (params, sort, filter) => {
           console.log(params, 'p');
-          const res = await getUsers(params);
+          const res = await getCategories(params);
           return res.data;
         }}
         editable={{
@@ -86,34 +84,29 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
         }}
         dateFormatter="string"
         toolBarRender={() => [
-          <ModalForm
-            key={'invite-form'}
+          <ModalForm<API.Book.CreateParams>
+            modalProps={{ destroyOnClose: true }}
+            key={'book-form'}
             onFinish={async (values) => {
-              await sendInviteCode({
-                email: values.email,
-                libraryIds: [values.libraryId],
-                roles: [values.role],
-              });
-              // actionRef.current?.reload();
-              message.success('邀请邮件发送成功');
+              await createBook(values);
+              actionRef.current?.reload();
+              message.success('图书新增成功');
               return Promise.resolve(true);
             }}
-            initialValues={{
-              libraryId: props.libraryId,
-              role: 'LIBRARY_ADMIN',
-            }}
-            title={'邀请成为图书管理员'}
+            title={'图书'}
             trigger={
               <Button key="button" icon={<PlusOutlined />} type="primary">
-                邀请注册
+                发布图书
               </Button>
             }
           >
-            <InviteRegister />
+            <BookFormTemplate />
           </ModalForm>,
         ]}
       />
-    );
-  },
-);
-UserList.displayName = '用户列表界面';
+    </PageContainer>
+  );
+});
+CategoryListPage.displayName = '图书分类界面';
+
+export default CategoryListPage;
