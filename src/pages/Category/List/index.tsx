@@ -1,6 +1,5 @@
-import { BookFormTemplate } from '@/components/FormTemplate/BookTemplate';
-import { createBook } from '@/services/book';
-import { getCategories } from '@/services/categroy';
+import { CategoryTemplate } from '@/components/FormTemplate/CategoryTemplate';
+import { createCategory, getCategories } from '@/services/categroy';
 import { Link } from '@@/exports';
 import { PlusOutlined } from '@ant-design/icons';
 import {
@@ -84,23 +83,23 @@ export const CategoryListPage: React.FC<
         }}
         dateFormatter="string"
         toolBarRender={() => [
-          <ModalForm<API.Book.CreateParams>
+          <ModalForm<API.Category.CreationParams>
             modalProps={{ destroyOnClose: true }}
             key={'book-form'}
             onFinish={async (values) => {
-              await createBook(values);
+              await createCategory(values);
               actionRef.current?.reload();
-              message.success('图书新增成功');
+              message.success('分类新增成功');
               return Promise.resolve(true);
             }}
-            title={'图书'}
+            title={'图书分类'}
             trigger={
               <Button key="button" icon={<PlusOutlined />} type="primary">
-                发布图书
+                创建图书分类
               </Button>
             }
           >
-            <BookFormTemplate />
+            <CategoryTemplate />
           </ModalForm>,
         ]}
       />
