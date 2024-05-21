@@ -1,6 +1,5 @@
 import { CategoryTemplate } from '@/components/FormTemplate/CategoryTemplate';
 import { createCategory, getCategories } from '@/services/categroy';
-import { Link } from '@@/exports';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   ActionType,
@@ -25,18 +24,18 @@ export const CategoryListPage: React.FC<
         columns={[
           { dataIndex: 'id', title: '编号' },
           {
-            dataIndex: 'title',
+            dataIndex: 'categoryName',
             title: '名称',
-            render: (dom, record) => {
-              return <Link to={`/library/detail/${record.id}`}>{dom}</Link>;
-            },
+            // render: (dom, record) => {
+            //   return <Link to={`/library/detail/${record.id}`}>{dom}</Link>;
+            // },
           },
           {
             dataIndex: 'description',
             title: '描述',
           },
         ]}
-        // actionRef={actionRef}
+        actionRef={actionRef}
         cardBordered
         // params={{ libraryId: libraryId }}
         request={async (params, sort, filter) => {

@@ -63,7 +63,12 @@ export default defineConfig({
     {
       path: '/category',
       component: './Category/List',
-      name: '图书分类管理',
+      name: '图书分类',
+    },
+    {
+      path: '/user',
+      component: './User/List',
+      name: '读者管理',
     },
     { path: '/register', component: './Auth/Register', layout: false },
     {

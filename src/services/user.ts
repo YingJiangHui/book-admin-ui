@@ -1,10 +1,12 @@
 import { request } from '@@/exports';
 
 export const getUsers = (
-  params: API.Common.ParamsWithPagination<{
-    libraryIds: number;
-    roleNames: API.Role.RoleType;
-  }>,
+  params: API.Common.ParamsWithPagination<
+    Partial<{
+      libraryIds: number;
+      roleNames: API.Role.RoleType;
+    }>
+  >,
 ) =>
   request<API.Common.ResultWithPagination<API.User.Instance>>('/api/users', {
     params,

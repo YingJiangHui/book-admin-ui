@@ -1,4 +1,4 @@
-import { getCategories } from '@/services/categroy';
+import { getAllCategories } from '@/services/categroy';
 import { getLibraries } from '@/services/library';
 import {
   ProForm,
@@ -56,9 +56,9 @@ export const BookFormTemplate: React.FC<
       <ProFormSelect
         rules={[{ required: true }]}
         fieldProps={{
-          fieldNames: { label: 'name', value: 'id' },
+          fieldNames: { label: 'categoryName', value: 'id' },
         }}
-        request={() => getCategories().then((res) => res.data)}
+        request={() => getAllCategories().then((res) => res.data)}
         label={'类型'}
         name={'categoryId'}
       />

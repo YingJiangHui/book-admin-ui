@@ -17,6 +17,7 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
     const actionRef = useRef<ActionType>();
     return (
       <ProTable<API.User.Instance, Parameters<typeof getUsers>[0]>
+        actionRef={actionRef}
         bordered
         columns={[
           { dataIndex: 'id', title: '编号' },

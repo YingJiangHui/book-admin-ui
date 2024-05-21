@@ -1,5 +1,6 @@
 /*Book 列表界面*/
 import { BookFormTemplate } from '@/components/FormTemplate/BookTemplate';
+import { Constants } from '@/constants';
 import { createBook } from '@/services/book';
 import { getBooksInLibrary } from '@/services/library';
 import { Link } from '@@/exports';
@@ -10,7 +11,7 @@ import {
   PageContainer,
   ProTable,
 } from '@ant-design/pro-components';
-import { Button, message } from 'antd';
+import { Button, Image, Tag, message } from 'antd';
 import React, { memo, useRef } from 'react';
 
 type props = {
@@ -27,6 +28,22 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
           bordered
           columns={[
             { dataIndex: 'id', title: '编号' },
+            //   图书封面
+            {
+              dataIndex: 'files',
+              title: '封面',
+              render: (dom, record) => {
+                return (
+                  <Image
+                    fallback={Constants.Common.ImageFallback}
+                    preview={false}
+                    src={record.files?.[0]?.url}
+                    alt={record.title + '封面'}
+                    style={{ width: 50 }}
+                  />
+                );
+              },
+            },
             {
               dataIndex: 'title',
               title: '书名',
@@ -36,10 +53,41 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
             },
             {
               dataIndex: 'isbn',
-              title: 'isbn',
+              title: 'ISBN',
+            },
+            {
+              dataIndex: 'author',
+              title: '作者',
+            },
+            {
+              dataIndex: 'publisher',
+              title: '出版社',
+            },
+            {
+              dataIndex: 'publishedYear',
+              title: '出版年份',
+            },
+            {
+              ellipsis: true,
+              dataIndex: 'description',
+              title: '描述',
+            },
+            {
+              ellipsis: true,
+              dataIndex: 'available',
+              title: '上架状态',
+              render: (dom, record) => {
+                return record.available ? (
+                  <Tag bordered={false} color="success">
+                    已上架
+                  </Tag>
+                ) : (
+                  <Tag bordered={false}>已下架</Tag>
+                );
+              },
             },
           ]}
-          // actionRef={actionRef}
+          actionRef={actionRef}
           cardBordered
           params={{ libraryId: libraryId }}
           request={async (params, sort, filter) => {
