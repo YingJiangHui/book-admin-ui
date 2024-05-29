@@ -1,13 +1,14 @@
 import { getAllCategories } from '@/services/categroy';
 import { getLibraries } from '@/services/library';
 import {
+  CaptFieldRef,
   ProForm,
   ProFormSelect,
   ProFormText,
   ProFormTextArea,
   ProFormUploadButton,
 } from '@ant-design/pro-components';
-import React, { memo } from 'react';
+import React, { memo, useRef } from 'react';
 import useForm = ProForm.useForm;
 
 type props = {};
@@ -16,6 +17,7 @@ export const BookFormTemplate: React.FC<
   React.PropsWithChildren<BookFormTemplateProps>
 > = memo((props) => {
   useForm<API.Book.CreateParams>();
+  const selectCategoryRef = useRef<CaptFieldRef>();
   return (
     <>
       <ProFormSelect
@@ -58,6 +60,7 @@ export const BookFormTemplate: React.FC<
         fieldProps={{
           fieldNames: { label: 'categoryName', value: 'id' },
         }}
+        fieldRef={selectCategoryRef}
         request={() => getAllCategories().then((res) => res.data)}
         label={'类型'}
         name={'categoryId'}

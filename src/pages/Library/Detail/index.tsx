@@ -2,7 +2,7 @@ import { CustomAMap } from '@/components/CustomAMap';
 import BookList from '@/pages/Book/Book';
 import { UserList } from '@/pages/User/User';
 import { getLibrary } from '@/services/library';
-import { useParams } from '@@/exports';
+import { useParams, useSearchParams } from '@@/exports';
 import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { useRequest } from 'ahooks';
 import { Descriptions } from 'antd';
@@ -19,9 +19,15 @@ export const LibraryDetail: React.FC<
   const libraryReq = useRequest(getLibrary, {
     defaultParams: [{ id: params.id! }],
   });
-
+  const [searchParams, setSearchParams] = useSearchParams({
+    activeTab: 'location',
+  });
   return (
     <PageContainer
+      tabActiveKey={searchParams.get('activeTab')!}
+      onTabChange={(activeTab) => {
+        setSearchParams({ activeTab }, { replace: true });
+      }}
       tabList={[
         {
           tab: '图书馆地理位置',
