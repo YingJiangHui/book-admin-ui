@@ -82,6 +82,12 @@ export default defineConfig({
       layout: false,
     },
     {
+      name: '系统设置',
+      path: '/system-settings',
+      component: './SystemSettings/SystemSettings',
+      access: 'canSystemAdmin',
+    },
+    {
       path: '/',
       redirect: '/home',
     },
