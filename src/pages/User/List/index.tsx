@@ -1,12 +1,18 @@
 import { InviteRegister } from '@/components/FormTemplate/InviteRegister/InviteRegister';
+import { Constants } from '@/constants';
 import { sendInviteCode } from '@/services/auth';
-import { getUsers } from '@/services/user';
+import { getLibraries } from '@/services/library';
+import { getRoles } from '@/services/role';
+import { getUsers, updateUserInfo } from '@/services/user';
 import { Link } from '@@/exports';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   ActionType,
   ModalForm,
   PageContainer,
+  ProFormDependency,
+  ProFormSelect,
+  ProFormSwitch,
   ProTable,
 } from '@ant-design/pro-components';
 import { Button, Space, Tag, message } from 'antd';
@@ -21,13 +27,14 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
   (props) => {
     const actionRef = useRef<ActionType>();
     return (
-      <PageContainer title={'读者管理'} ghost>
+      <PageContainer title={'用户管理'} ghost>
         <ProTable<API.User.Instance, Parameters<typeof getUsers>[0]>
           actionRef={actionRef}
           bordered
           columns={[
-            { dataIndex: 'id', title: '编号' },
+            { dataIndex: 'id', title: '编号', search: false },
             {
+              search: false,
               dataIndex: 'email',
               title: '账号',
               render: (dom, record) => {
@@ -35,6 +42,20 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
               },
             },
             {
+              dataIndex: 'roleNames',
+              title: '角色',
+              hideInTable: true,
+              valueType: 'select',
+              request: async () =>
+                getRoles().then((res) => {
+                  return res.data.map((role) => ({
+                    label: Constants.User.UserRoleMapToText[role.roleName],
+                    value: role.roleName,
+                  }));
+                }),
+            },
+            {
+              search: false,
               dataIndex: 'roles',
               title: '角色',
               render: (_, record) => (
@@ -45,10 +66,94 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
                 </Space>
               ),
             },
+            {
+              search: false,
+              dataIndex: 'defaultTimes',
+              title: '违约次数',
+              renderText: (text) => text || '-',
+            },
+            {
+              dataIndex: 'isBlacklist',
+              title: '是否黑名单',
+              renderText: (text) => (text ? '是' : '否'),
+            },
+            {
+              search: false,
+              dataIndex: 'action',
+              title: '操作',
+              render: (dom, record) => (
+                <>
+                  <ModalForm<{
+                    roles: API.Role.RoleType[];
+                    isBlackList: boolean;
+                    libraryIds: number[];
+                  }>
+                    onFinish={async (values) => {
+                      await updateUserInfo({ id: record.id, ...values });
+                      message.success('调整成功');
+                      actionRef.current?.reload();
+                      return Promise.resolve(true);
+                    }}
+                    title={'用户调整'}
+                    initialValues={{
+                      roles: record.roles.map((role) => role.roleName),
+                      isBlackList: record.isBlackList,
+                      libraryIds: record.libraries.map((item) => item.id),
+                    }}
+                    trigger={<a>调整</a>}
+                  >
+                    <ProFormSelect
+                      mode={'multiple'}
+                      label={'角色'}
+                      name={'roles'}
+                      request={async () =>
+                        getRoles().then((res) => {
+                          return res.data.map((role) => ({
+                            label:
+                              Constants.User.UserRoleMapToText[role.roleName],
+                            value: role.roleName,
+                          }));
+                        })
+                      }
+                    />
+                    <ProFormDependency
+                      name={['roles']}
+                      dependencies={['roles']}
+                    >
+                      {({ roles }) => {
+                        return roles?.includes(
+                          Constants.Role.RoleEnum.LIBRARY_ADMIN,
+                        ) ? (
+                          <ProFormSelect
+                            mode={'multiple'}
+                            label={'图书馆'}
+                            name={'libraryIds'}
+                            request={async () =>
+                              getLibraries().then((res) => {
+                                return res.data.map((item) => ({
+                                  label: item.name,
+                                  value: item.id,
+                                }));
+                              })
+                            }
+                          />
+                        ) : (
+                          ''
+                        );
+                      }}
+                    </ProFormDependency>
+                    <ProFormSwitch
+                      name={'isBlacklist'}
+                      label={'是否是黑名单'}
+                    />
+                  </ModalForm>
+                </>
+              ),
+            },
           ]}
           // actionRef={actionRef}
           cardBordered
-          params={{ roleNames: 'READER' }}
+          // params={{ roleNames: 'READER' }}
           request={async (params, sort, filter) => {
             console.log(params, 'p');
             const res = await getUsers(params);
@@ -68,7 +173,7 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
             },
           }}
           rowKey="id"
-          search={false}
+          // search={false}
           options={{
             setting: {
               listsHeight: 400,

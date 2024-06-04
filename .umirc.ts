@@ -68,7 +68,7 @@ export default defineConfig({
     {
       path: '/user',
       component: './User/List',
-      name: '读者管理',
+      name: '用户管理',
     },
     { path: '/register', component: './Auth/Register', layout: false },
     {

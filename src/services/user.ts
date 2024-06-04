@@ -14,3 +14,19 @@ export const getUsers = (
 
 export const getUserInfo = () =>
   request<API.Common.Result<API.User.Current>>('/api/users/current');
+
+export const updateUserInfo = (params: {
+  id: number;
+  roles: API.Role.RoleType[];
+  libraryIds: number[];
+  isBlackList: boolean;
+}) => {
+  const { id, ...rest } = params;
+  return request<API.Common.Result<API.User.Current>>(
+    `/api/users/${params.id}`,
+    {
+      method: 'PATCH',
+      data: rest,
+    },
+  );
+};

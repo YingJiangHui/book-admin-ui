@@ -11,7 +11,9 @@ namespace API {
       id: number;
       email: string;
       roles: API.Role.Instance[];
-      libraryIds: number[];
+      libraries: API.Library.Instance[];
+      isBlackList: boolean;
+      defaultTimes: number;
     };
   }
 }
