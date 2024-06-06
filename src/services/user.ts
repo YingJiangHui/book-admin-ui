@@ -19,7 +19,7 @@ export const updateUserInfo = (params: {
   id: number;
   roles: API.Role.RoleType[];
   libraryIds: number[];
-  isBlackList: boolean;
+  isBlacklist: boolean;
 }) => {
   const { id, ...rest } = params;
   return request<API.Common.Result<API.User.Current>>(

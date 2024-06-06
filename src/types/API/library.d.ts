@@ -10,6 +10,8 @@ namespace API {
       longitude: number;
 
       circumference: number;
+
+      address: string;
     };
   }
 }

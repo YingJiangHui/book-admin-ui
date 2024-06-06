@@ -1,5 +1,5 @@
 import { getAllCategories } from '@/services/categroy';
-import { getLibraries } from '@/services/library';
+import { getLibrariesAll } from '@/services/library';
 import {
   CaptFieldRef,
   ProForm,
@@ -26,7 +26,7 @@ export const BookFormTemplate: React.FC<
         fieldProps={{
           fieldNames: { label: 'name', value: 'id' },
         }}
-        request={() => getLibraries().then((res) => res.data)}
+        request={() => getLibrariesAll().then((res) => res.data)}
         label={'图书馆'}
         name={'libraryId'}
       />

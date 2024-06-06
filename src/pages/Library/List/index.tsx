@@ -1,22 +1,22 @@
 import { getLibraries } from '@/services/library';
-import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import {
   ActionType,
   PageContainer,
   ProTable,
 } from '@ant-design/pro-components';
 import { Link, history } from '@umijs/max';
-import { Button, Dropdown } from 'antd';
+import { Button } from 'antd';
 import { useRef } from 'react';
 
 export default () => {
   const actionRef = useRef<ActionType>();
   return (
     <PageContainer ghost header={{ title: '图书馆列表' }}>
-      <ProTable<any>
+      <ProTable<any, API.Library.Instance>
         bordered
         columns={[
-          { dataIndex: 'id', valueType: 'indexBorder', title: '编号' },
+          { dataIndex: 'id', title: '编号' },
           {
             dataIndex: 'name',
             title: '图书馆',
@@ -25,27 +25,33 @@ export default () => {
             },
           },
           {
+            dataIndex: 'address',
+            title: '地址',
+            ellipsis: true,
+          },
+          {
             dataIndex: 'coords',
             title: '坐标',
             render: (_, record) => `${record.longitude},${record.latitude}`,
+            search: false,
           },
-          { dataIndex: 'circumference', title: '范围（半径/米）' },
-          { dataIndex: 'libraryAdmins', title: '管理员' },
+          {
+            dataIndex: 'circumference',
+            title: '范围（半径/米）',
+            search: false,
+          },
         ]}
         // actionRef={actionRef}
         cardBordered
         request={async (params, sort, filter) => {
-          const a = await getLibraries()
+          return await getLibraries(params)
             .then((res) => {
-              console.log(res);
               return res;
             })
             .then((res) => ({
-              data: res.data,
-              total: res.data.length,
+              data: res.data.data,
+              total: res.data.total,
             }));
-          console.log(a, 'a');
-          return a;
         }}
         editable={{
           type: 'multiple',
@@ -75,7 +81,6 @@ export default () => {
             if (type === 'get') {
               return {
                 ...values,
-                created_at: [values.startTime, values.endTime],
               };
             }
             return values;
@@ -86,7 +91,6 @@ export default () => {
           onChange: (page) => console.log(page),
         }}
         dateFormatter="string"
-        headerTitle="高级表格"
         toolBarRender={() => [
           <Button
             key="button"
@@ -98,29 +102,6 @@ export default () => {
           >
             创建图书馆
           </Button>,
-          <Dropdown
-            key="menu"
-            menu={{
-              items: [
-                {
-                  label: '1st item',
-                  key: '1',
-                },
-                {
-                  label: '2nd item',
-                  key: '1',
-                },
-                {
-                  label: '3rd item',
-                  key: '1',
-                },
-              ],
-            }}
-          >
-            <Button>
-              <EllipsisOutlined />
-            </Button>
-          </Dropdown>,
         ]}
       />
     </PageContainer>

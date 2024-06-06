@@ -2,43 +2,61 @@ import { searchPoi } from '@/utils/AMap';
 import {
   ProForm,
   ProFormDigit,
+  ProFormProps,
   ProFormSelect,
   ProFormText,
+  ProFormTextArea,
 } from '@ant-design/pro-components';
-import { FormInstance } from 'antd/lib';
+import { Space } from 'antd';
 import React, { memo } from 'react';
 
 export type AMapControlValueType = {
-  coordsDisplay: string;
+  searchCoords: string;
   name: string;
   coords: string;
   circumference: number;
+  address: string;
 };
 
-type props = {
-  onChange?: (
-    changedValue: Partial<AMapControlValueType>,
-    values: AMapControlValueType,
-  ) => void;
-  form: FormInstance<AMapControlValueType>;
-  onFinish: (values: AMapControlValueType) => Promise<void>;
-};
+type props = {} & ProFormProps<AMapControlValueType>;
 export type ControlPanelProps = props;
 export const ControlPanel: React.FC<
   React.PropsWithChildren<ControlPanelProps>
 > = memo((props) => {
-  const { onFinish, onChange, form } = props;
+  const { onChange, initialValues, form, ...rest } = props;
+  console.log(initialValues, 'initialValues');
   return (
     <>
-      <ProForm
+      <ProForm<AMapControlValueType>
+        {...rest}
+        submitter={{
+          render: (props, dom) => {
+            const submitUI = dom[1];
+            return (
+              <Space>
+                {dom[0]}
+                {React.isValidElement(submitUI)
+                  ? React.cloneElement(submitUI, {
+                      // @ts-ignore
+                      ...submitUI.props,
+                      children: initialValues ? '修 改' : '提 交',
+                    })
+                  : submitUI}
+              </Space>
+            );
+          },
+        }}
+        initialValues={{
+          ...initialValues,
+          coords:
+            initialValues?.longitude && initialValues?.longitude
+              ? `${initialValues?.longitude},${initialValues?.latitude}`
+              : undefined,
+        }}
         form={form}
         // submitter={{
         //   render: (_, dom) => <Space style={{ textAlign: 'end' }}>{dom}</Space>,
         // }}
-        onValuesChange={(changedValues, values) => {
-          onChange?.(changedValues, values);
-        }}
-        onFinish={onFinish}
       >
         <ProFormSelect
           showSearch
@@ -52,7 +70,7 @@ export const ControlPanel: React.FC<
               })),
             );
           }}
-          name={'coords'}
+          name={'searchCoords'}
           label={'地点搜索'}
         />
         <ProFormText
@@ -60,16 +78,21 @@ export const ControlPanel: React.FC<
           name={'name'}
           label={'图书馆名称'}
         />
+        <ProFormTextArea
+          rules={[{ required: true }]}
+          name={'address'}
+          label={'详细地址'}
+        />
         <ProFormText
           rules={[{ required: true }]}
-          name={'coordsDisplay'}
+          name={'coords'}
           label={'经纬度'}
         />
         <ProFormDigit
           rules={[{ required: true }]}
           name={'circumference'}
           initialValue={100}
-          label={'范围（半径）'}
+          label={'范围（半径m）'}
         />
       </ProForm>
     </>

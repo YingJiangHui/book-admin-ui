@@ -12,7 +12,7 @@ namespace API {
       email: string;
       roles: API.Role.Instance[];
       libraries: API.Library.Instance[];
-      isBlackList: boolean;
+      isBlacklist: boolean;
       defaultTimes: number;
     };
   }

@@ -21,7 +21,7 @@ export default defineConfig({
     },
   ],
   scripts: [
-    'https://webapi.amap.com/maps?v=2.0&key=afbb14d219ab8177546eae44a24daa91',
+    'https://webapi.amap.com/maps?v=2.0&key=afbb14d219ab8177546eae44a24daa91&plugin=AMap.Geocoder',
   ],
   externals: {
     AMap: 'window.AMap',

@@ -1,10 +1,9 @@
 import { InviteRegister } from '@/components/FormTemplate/InviteRegister/InviteRegister';
 import { Constants } from '@/constants';
 import { sendInviteCode } from '@/services/auth';
-import { getLibraries } from '@/services/library';
+import { getLibrariesAll } from '@/services/library';
 import { getRoles } from '@/services/role';
 import { getUsers, updateUserInfo } from '@/services/user';
-import { Link } from '@@/exports';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   ActionType,
@@ -29,16 +28,17 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
     return (
       <PageContainer title={'用户管理'} ghost>
         <ProTable<API.User.Instance, Parameters<typeof getUsers>[0]>
+          // params={{ roleNames: Constants.Role.RoleEnum.READER }}
           actionRef={actionRef}
           bordered
           columns={[
             { dataIndex: 'id', title: '编号', search: false },
             {
-              search: false,
               dataIndex: 'email',
               title: '账号',
               render: (dom, record) => {
-                return <Link to={`/library/detail/${record.id}`}>{dom}</Link>;
+                // return <Link to={`/library/detail/${record.id}`}>{dom}</Link>;
+                return dom;
               },
             },
             {
@@ -58,13 +58,31 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
               search: false,
               dataIndex: 'roles',
               title: '角色',
-              render: (_, record) => (
-                <Space size={1}>
-                  {record.roles.map((role) => (
-                    <Tag key={role.id}>{role.description}</Tag>
-                  ))}
-                </Space>
-              ),
+              render: (_, record) =>
+                record.roles.length ? (
+                  <Space size={1}>
+                    {record.roles.map((role) => (
+                      <Tag key={role.id}>{role.description}</Tag>
+                    ))}
+                  </Space>
+                ) : (
+                  '-'
+                ),
+            },
+            {
+              search: false,
+              dataIndex: 'libraries',
+              title: '负责图书馆',
+              render: (_, record) =>
+                record.libraries?.length ? (
+                  <Space size={1}>
+                    {record.libraries.map((lib) => (
+                      <Tag key={lib.id}>{lib.name}</Tag>
+                    ))}
+                  </Space>
+                ) : (
+                  '-'
+                ),
             },
             {
               search: false,
@@ -73,9 +91,18 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
               renderText: (text) => text || '-',
             },
             {
+              dependencies: ['roleNames'],
               dataIndex: 'isBlacklist',
               title: '是否黑名单',
-              renderText: (text) => (text ? '是' : '否'),
+              valueType: 'select',
+              valueEnum: { true: '是', false: '否' },
+              render: (dom, record) => (record.isBlacklist ? '是' : '否'),
+            },
+            {
+              dataIndex: 'createdAt',
+              title: '注册日期',
+              valueType: 'date',
+              search: false,
             },
             {
               search: false,
@@ -85,11 +112,12 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
                 <>
                   <ModalForm<{
                     roles: API.Role.RoleType[];
-                    isBlackList: boolean;
+                    isBlacklist: boolean;
                     libraryIds: number[];
                   }>
                     onFinish={async (values) => {
                       await updateUserInfo({ id: record.id, ...values });
+
                       message.success('调整成功');
                       actionRef.current?.reload();
                       return Promise.resolve(true);
@@ -97,7 +125,7 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
                     title={'用户调整'}
                     initialValues={{
                       roles: record.roles.map((role) => role.roleName),
-                      isBlackList: record.isBlackList,
+                      isBlacklist: record.isBlacklist,
                       libraryIds: record.libraries.map((item) => item.id),
                     }}
                     trigger={<a>调整</a>}
@@ -129,7 +157,7 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
                             label={'图书馆'}
                             name={'libraryIds'}
                             request={async () =>
-                              getLibraries().then((res) => {
+                              getLibrariesAll().then((res) => {
                                 return res.data.map((item) => ({
                                   label: item.name,
                                   value: item.id,
@@ -173,13 +201,13 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
             },
           }}
           rowKey="id"
-          // search={false}
           options={{
             setting: {
               listsHeight: 400,
             },
           }}
           form={{
+            // formRef: formRef,
             // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
             syncToUrl: (values, type) => {
               if (type === 'get') {

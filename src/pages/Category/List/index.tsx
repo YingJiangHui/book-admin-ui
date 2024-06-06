@@ -1,13 +1,17 @@
 import { CategoryTemplate } from '@/components/FormTemplate/CategoryTemplate';
-import { createCategory, getCategories } from '@/services/categroy';
-import { PlusOutlined } from '@ant-design/icons';
+import {
+  createCategory,
+  deleteCategory,
+  getCategories,
+} from '@/services/categroy';
+import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
   ActionType,
   ModalForm,
   PageContainer,
   ProTable,
 } from '@ant-design/pro-components';
-import { Button, message } from 'antd';
+import { Button, Popconfirm, message } from 'antd';
 import React, { memo, useRef } from 'react';
 
 type props = {};
@@ -33,6 +37,33 @@ export const CategoryListPage: React.FC<
           {
             dataIndex: 'description',
             title: '描述',
+          },
+          {
+            dataIndex: 'createdAt',
+            title: '创建日期',
+            valueType: 'date',
+            search: false,
+          },
+          {
+            dataIndex: 'actions',
+            title: '操作',
+            render: (_, record) => (
+              <>
+                <Popconfirm
+                  title="删除操作"
+                  description="确认是否进行删除操作"
+                  icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                  onConfirm={() => {
+                    deleteCategory(record.id).then(() => {
+                      message.success('操作成功');
+                      actionRef.current?.reload();
+                    });
+                  }}
+                >
+                  <a>删除</a>
+                </Popconfirm>
+              </>
+            ),
           },
         ]}
         actionRef={actionRef}

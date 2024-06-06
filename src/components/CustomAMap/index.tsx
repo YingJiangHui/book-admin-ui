@@ -2,12 +2,14 @@ import {
   AMapControlValueType,
   ControlPanel,
 } from '@/components/CustomAMap/ControlPanel';
-import { postCreateLibrary } from '@/services/library';
-import { Form, message } from 'antd';
+import { getAddressByLngLat } from '@/utils/AMap';
+import { ProFormProps } from '@ant-design/pro-components';
+import { Form } from 'antd';
 import React, { memo, useEffect, useRef } from 'react';
 /// <reference types="@types/amap-js-api" />
 type props = {};
-export type CustomAMapProps = props;
+export type CustomAMapProps = props &
+  ProFormProps<Partial<API.Library.Instance>>;
 const markerInstance = new AMap.Marker({
   icon: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png',
   anchor: 'bottom-center',
@@ -23,11 +25,24 @@ const circleInstance = new AMap.Circle({
   // draggable: true
 });
 
+const setPoint =
+  (aMap: AMap.Map, circleInstance: AMap.Circle, markerInstance: AMap.Marker) =>
+  (params: { lnglat: AMap.LngLat; radius: number }) => {
+    const { lnglat, radius } = params;
+    markerInstance.setPosition(lnglat);
+    circleInstance.setCenter(lnglat);
+    circleInstance.setRadius(radius);
+    aMap?.add(markerInstance);
+    aMap?.add(circleInstance);
+  };
+
 export const CustomAMap: React.FC<React.PropsWithChildren<CustomAMapProps>> =
   memo((props) => {
+    const { onFinish, initialValues } = props;
     const [form] = Form.useForm<AMapControlValueType>();
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const MapRef = useRef<AMap.Map>();
+
     useEffect(() => {
       const { AMap } = window;
       if (AMap && mapContainerRef.current) {
@@ -36,32 +51,47 @@ export const CustomAMap: React.FC<React.PropsWithChildren<CustomAMapProps>> =
           zoom: 11, // 缩放级别
         });
 
-        // // 添加标记
-        // const marker = new AMap.Marker({
-        //   position: [116.397428, 39.90923],
-        // });
-        // MapRef.current.add(marker);
-
         // 添加点击事件
         MapRef.current.on('click', (e) => {
           const { lnglat } = e;
-          circleInstance.setCenter(lnglat);
-          markerInstance.setPosition(lnglat);
-          MapRef.current?.add(circleInstance);
-          MapRef.current?.add(markerInstance);
+          console.log(e, 'e');
+          setPoint(
+            MapRef.current!,
+            circleInstance,
+            markerInstance,
+          )({ radius: form.getFieldValue('circumference'), lnglat: lnglat });
+
+          MapRef.current?.setCenter(markerInstance.getPosition()!);
+          MapRef.current?.setZoom(18);
           form.setFieldsValue({
-            coordsDisplay: `${lnglat.lng},${lnglat.lat}`,
+            coords: `${lnglat.lng},${lnglat.lat}`,
           });
-          // new AMap.Marker({
-          //   position: lnglat,
-          //   map: map,
-          // });
+
+          getAddressByLngLat(lnglat).then((res) => {
+            form.setFieldsValue({
+              address: res,
+            });
+          });
         });
       } else {
         console.error('AMap not loaded');
       }
     }, []);
+    useEffect(() => {
+      if (initialValues?.coords && initialValues?.circumference) {
+        const center = new AMap.LngLat(
+          ...(initialValues.coords.split(',').map(Number) as [number, number]),
+        );
+        setPoint(
+          MapRef.current!,
+          circleInstance,
+          markerInstance,
+        )({ radius: initialValues.circumference, lnglat: center });
 
+        MapRef.current?.setCenter(markerInstance.getPosition()!);
+        MapRef.current?.setZoom(18);
+      }
+    }, [initialValues?.coords, initialValues?.circumference]);
     return (
       <div style={{ position: 'relative' }}>
         <div
@@ -81,38 +111,46 @@ export const CustomAMap: React.FC<React.PropsWithChildren<CustomAMapProps>> =
           }}
         >
           <ControlPanel
+            initialValues={initialValues}
             onFinish={async (values) => {
-              const [longitude, latitude] = values.coordsDisplay
+              const [longitude, latitude] = values.coords
                 ?.split(',')
                 .map(Number);
-              await postCreateLibrary({
+              return onFinish?.({
                 name: values.name,
                 latitude: latitude,
                 longitude: longitude,
                 circumference: values.circumference,
+                address: values.address,
               });
-              message.success('添加成功');
-              history.back();
             }}
             form={form}
-            onChange={(changedValue, values) => {
-              if (!values?.coords || values?.coords.indexOf(',') === -1) {
-                return;
+            onValuesChange={(changedValue, values) => {
+              if (
+                changedValue.searchCoords ||
+                (changedValue?.coords &&
+                  changedValue?.coords?.indexOf(',') !== -1)
+              ) {
+                const coords = changedValue.searchCoords || values?.coords;
+                const center = new AMap.LngLat(
+                  ...(coords.split(',').map(Number) as [number, number]),
+                );
+                setPoint(
+                  MapRef.current!,
+                  circleInstance,
+                  markerInstance,
+                )({ radius: values.circumference, lnglat: center });
+                getAddressByLngLat(center).then((res) => {
+                  form.setFieldValue('address', res);
+                });
+                MapRef.current?.setCenter(markerInstance.getPosition()!);
+                MapRef.current?.setZoom(18);
+                form.setFieldValue('coords', coords);
               }
-              const center = new AMap.LngLat(
-                ...(values?.coords.split(',').map(Number) as [number, number]),
-              );
-              markerInstance.setPosition(center);
-              circleInstance.setCenter(center);
-              circleInstance.setRadius(values.circumference);
-              MapRef.current?.add(markerInstance);
-              MapRef.current?.add(circleInstance);
-              MapRef.current?.setCenter(markerInstance.getPosition()!);
-              // MapRef.current?.zoomIn();
-              MapRef.current?.setZoom(18);
-              // form.setFieldsValue({
-              //   coordsDisplay: values.coords,
-              // });
+
+              if (changedValue.circumference) {
+                circleInstance.setRadius(changedValue.circumference);
+              }
             }}
           />
         </div>

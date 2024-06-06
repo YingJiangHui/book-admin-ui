@@ -32,3 +32,19 @@ export function searchPoi(keywords: string) {
     },
   );
 }
+
+export const getAddressByLngLat = (lngLat: AMap.LngLat) => {
+  return new Promise<string>((resolve, reject) => {
+    // @ts-ignore
+    const geocoder = new AMap.Geocoder({});
+    // @ts-ignore
+    geocoder.getAddress(lngLat, (status, result) => {
+      if (status === 'complete' && result.info === 'OK') {
+        console.log('asd位置', result.regeocode.formattedAddress, result);
+        resolve(result.regeocode.formattedAddress as string);
+      } else {
+        reject(result);
+      }
+    });
+  });
+};

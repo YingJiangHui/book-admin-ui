@@ -1,11 +1,10 @@
 import { CustomAMap } from '@/components/CustomAMap';
 import BookList from '@/pages/Book/Book';
 import { UserList } from '@/pages/User/User';
-import { getLibrary } from '@/services/library';
-import { useParams, useSearchParams } from '@@/exports';
+import { getLibrary, postUpdateLibrary } from '@/services/library';
+import { useParams, useRequest, useSearchParams } from '@@/exports';
 import { PageContainer, ProCard } from '@ant-design/pro-components';
-import { useRequest } from 'ahooks';
-import { Descriptions } from 'antd';
+import { Descriptions, message } from 'antd';
 import React, { memo } from 'react';
 
 type props = {};
@@ -33,8 +32,19 @@ export const LibraryDetail: React.FC<
           tab: '图书馆地理位置',
           key: 'location',
           children: (
-            <ProCard>
-              <CustomAMap></CustomAMap>
+            <ProCard loading={libraryReq.loading}>
+              <CustomAMap
+                onFinish={async (values) => {
+                  await postUpdateLibrary({
+                    ...values,
+                    id: libraryReq.data?.id,
+                  });
+                  message.success('修改成功');
+                  libraryReq.refresh();
+                  return Promise.resolve(true);
+                }}
+                initialValues={libraryReq.data}
+              />
             </ProCard>
           ),
         },
@@ -42,7 +52,7 @@ export const LibraryDetail: React.FC<
           tab: '图书馆管理人员',
           key: 'admin',
           children: (
-            <ProCard>
+            <ProCard loading={libraryReq.loading}>
               <UserList
                 roles={['LIBRARY_ADMIN']}
                 libraryId={Number(params.id)}
@@ -54,22 +64,25 @@ export const LibraryDetail: React.FC<
           tab: '图书馆藏书',
           key: 'book',
           children: (
-            <ProCard>
+            <ProCard loading={libraryReq.loading}>
               <BookList libraryId={Number(params.id)} />
             </ProCard>
           ),
         },
       ]}
       content={
-        <Descriptions column={3}>
+        <Descriptions column={2}>
           <Descriptions.Item label="图书馆名称">
-            {libraryReq.data?.data.name}
+            {libraryReq.data?.name}
           </Descriptions.Item>
           <Descriptions.Item label="图书馆地址">
-            {libraryReq.data?.data.longitude},{libraryReq.data?.data.latitude}
+            {libraryReq?.data?.address}
+          </Descriptions.Item>
+          <Descriptions.Item label="经纬度">
+            {libraryReq?.data?.longitude},{libraryReq.data?.latitude}
           </Descriptions.Item>
           <Descriptions.Item label="范围(半径)">
-            {libraryReq.data?.data.circumference}m
+            {libraryReq.data?.circumference}m
           </Descriptions.Item>
         </Descriptions>
       }

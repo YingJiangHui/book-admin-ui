@@ -1,12 +1,30 @@
 import { request } from '@@/exports';
-export const postCreateLibrary = (params: Omit<API.Library.Instance, 'id'>) =>
-  request<API.Common.Result<string>>('/api/library', {
+export const postCreateLibrary = (params: Partial<API.Library.Instance>) =>
+  request<API.Common.Result<API.Library.Instance>>('/api/library', {
     data: params,
     method: 'POST',
   });
 
-export const getLibraries = () =>
-  request<API.Common.Result<API.Library.Instance[]>>('/api/library', {
+export const postUpdateLibrary = (params: Partial<API.Library.Instance>) =>
+  request<API.Common.Result<string>>('/api/library', {
+    data: params,
+    method: 'PATCH',
+  });
+
+export const getLibraries = (
+  params?: API.Common.ParamsWithPagination<API.Library.Instance>,
+) =>
+  request<API.Common.ResultWithPagination<API.Library.Instance>>(
+    '/api/library',
+    {
+      // data: params,
+      method: 'GET',
+      params,
+    },
+  );
+
+export const getLibrariesAll = () =>
+  request<API.Common.Result<API.Library.Instance[]>>('/api/library/all', {
     // data: params,
     method: 'GET',
   });

@@ -21,3 +21,12 @@ export const createCategory = (params: API.Category.CreationParams) => {
     method: 'POST',
   });
 };
+
+export const deleteCategory = (id: number) => {
+  return request<API.Common.Result<API.Category.Instance>>(
+    `/api/categories/${id}`,
+    {
+      method: 'DELETE',
+    },
+  );
+};

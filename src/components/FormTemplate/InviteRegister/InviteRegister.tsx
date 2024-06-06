@@ -1,5 +1,5 @@
 import { Constants } from '@/constants';
-import { getLibraries } from '@/services/library';
+import { getLibrariesAll } from '@/services/library';
 import { getRoles } from '@/services/role';
 import { MailOutlined } from '@ant-design/icons';
 import { ProFormSelect, ProFormText } from '@ant-design/pro-components';
@@ -45,7 +45,7 @@ export const InviteRegister: React.FC<
           },
         ]}
         request={async () => {
-          return getLibraries().then((res) => {
+          return getLibrariesAll().then((res) => {
             return res.data;
           });
         }}
