@@ -29,7 +29,7 @@ export const LibraryDetail: React.FC<
       }}
       tabList={[
         {
-          tab: '图书馆地理位置',
+          tab: '地理位置',
           key: 'location',
           children: (
             <ProCard loading={libraryReq.loading}>
@@ -49,7 +49,7 @@ export const LibraryDetail: React.FC<
           ),
         },
         {
-          tab: '图书馆管理人员',
+          tab: '管理人员',
           key: 'admin',
           children: (
             <ProCard loading={libraryReq.loading}>
@@ -61,7 +61,7 @@ export const LibraryDetail: React.FC<
           ),
         },
         {
-          tab: '图书馆藏书',
+          tab: '藏书',
           key: 'book',
           children: (
             <ProCard loading={libraryReq.loading}>

@@ -78,9 +78,14 @@ export const CustomAMap: React.FC<React.PropsWithChildren<CustomAMapProps>> =
       }
     }, []);
     useEffect(() => {
-      if (initialValues?.coords && initialValues?.circumference) {
+      if (
+        initialValues?.longitude &&
+        initialValues.latitude &&
+        initialValues?.circumference
+      ) {
         const center = new AMap.LngLat(
-          ...(initialValues.coords.split(',').map(Number) as [number, number]),
+          initialValues.longitude,
+          initialValues.latitude,
         );
         setPoint(
           MapRef.current!,
@@ -89,9 +94,13 @@ export const CustomAMap: React.FC<React.PropsWithChildren<CustomAMapProps>> =
         )({ radius: initialValues.circumference, lnglat: center });
 
         MapRef.current?.setCenter(markerInstance.getPosition()!);
-        MapRef.current?.setZoom(18);
+        MapRef.current?.setZoom(12);
       }
-    }, [initialValues?.coords, initialValues?.circumference]);
+    }, [
+      initialValues?.latitude,
+      initialValues?.longitude,
+      initialValues?.circumference,
+    ]);
     return (
       <div style={{ position: 'relative' }}>
         <div
