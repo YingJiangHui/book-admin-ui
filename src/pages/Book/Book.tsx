@@ -126,12 +126,25 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
                       <a>上架</a>
                     </Popconfirm>
                   )}
-                  <ModalForm<API.Book.CreateParams>
+                  <ModalForm<
+                    Omit<API.Book.CreateParams, 'file'> & { file: any[] }
+                  >
                     formRef={formRef}
-                    modalProps={{ maskClosable: false }}
+                    modalProps={{ maskClosable: false, destroyOnClose: true }}
                     key={'book-form-edit'}
                     onFinish={async (values) => {
-                      await updateBook({ ...values, id: record.id });
+                      console.log(values, 'value');
+                      const { file } = values;
+                      await updateBook({
+                        ...values,
+                        id: record.id,
+                        file: file.filter((item) =>
+                          Boolean(item.originFileObj),
+                        ),
+                        oldFileIds: file
+                          .filter((item) => Boolean(item.id))
+                          .map((item) => item.id),
+                      });
                       actionRef.current?.reload();
                       message.success('操作成功');
                       formRef.current?.resetFields();
@@ -140,7 +153,10 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
                     initialValues={{
                       ...record,
                       libraryId: libraryId,
-                      file: record?.files?.map((item) => ({ url: item.url })),
+                      file: record?.files?.map((item) => ({
+                        url: item.url,
+                        id: item.id,
+                      })),
                       // isbn: '9787544792745',
                       // title: '一百年，许多人，许多事',
                       // author: '杨苡/口述 / 余斌/撰写',

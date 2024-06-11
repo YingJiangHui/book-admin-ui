@@ -13,6 +13,6 @@ export const waitTime = async (time: number = 100) => {
 
 export const toLogin = () => {
   history.push({
-    pathname: `/login?redirectTo=${window.location.pathname}`,
+    pathname: `/login?redirectTo=${window.location.pathname}${window.location.search}`,
   });
 };

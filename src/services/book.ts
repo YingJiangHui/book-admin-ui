@@ -24,18 +24,20 @@ export const createBook = async (params: API.Book.CreateParams) => {
 };
 
 export const updateBook = async (
-  params: API.Book.CreateParams & { id: number | string },
+  params: API.Book.CreateParams & { id: number | string; oldFileIds: number[] },
 ) => {
-  const { id, file: _file, ...rest } = params;
+  const { id, file, oldFileIds, ...rest } = params;
   const formData = objectToFormData(rest);
-  const file = (_file as any[]).filter(
-    (f) => Object.keys(f).length > 3,
-  ) as UploadFile[];
-  console.log(file, 'file');
+
   if (file.length)
-    (file as UploadFile[]).forEach((f) => {
+    file.forEach((f) => {
       formData.append('file', f.originFileObj!);
     });
+  if (oldFileIds.length)
+    oldFileIds.forEach((f) => {
+      formData.append('oldFileIds', f.toString());
+    });
+
   return request<API.Common.Result<API.Book.Instance>>(`/api/books/${id}`, {
     data: formData,
     method: 'PATCH',

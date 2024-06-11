@@ -43,6 +43,12 @@ export default defineConfig({
     //   ],
     // },
     {
+      path: '/system-admin/statistics',
+      component: './Statistics/SystemAdmin',
+      name: '数据统计',
+      access: 'canSystemAdmin',
+    },
+    {
       path: '/library',
       component: './Library/List',
       name: '图书馆',

@@ -21,7 +21,10 @@ namespace API {
 
       libraryId: number;
     }
-    type CreateParams = Omit<Instance, 'files'> & { [key: string]: any };
+    type CreateParams = Omit<Instance, 'files'> & {
+      file: { originFileObj: File }[];
+      oldFileIds: number[];
+    };
     interface ListParams {}
   }
 }
