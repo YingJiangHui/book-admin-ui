@@ -1,4 +1,4 @@
-import { getLibraries } from '@/services/library';
+import { getLibraries, postUpdateLibrary } from '@/services/library';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   ActionType,
@@ -40,8 +40,52 @@ export default () => {
             title: '范围（半径/米）',
             search: false,
           },
+          {
+            dataIndex: 'closed',
+            title: '状态',
+            valueEnum: {
+              true: { text: '闭馆', status: 'Error' },
+              false: { text: '正常', status: 'Success' },
+            },
+          },
+          {
+            dataIndex: 'actions',
+            title: '操作',
+            search: false,
+            render: (_, record) => {
+              return (
+                <>
+                  {record.closed ? (
+                    <a
+                      onClick={async () => {
+                        await postUpdateLibrary({
+                          closed: false,
+                          id: record.id,
+                        });
+                        actionRef.current?.reload();
+                      }}
+                    >
+                      开馆
+                    </a>
+                  ) : (
+                    <a
+                      onClick={async () => {
+                        await postUpdateLibrary({
+                          closed: true,
+                          id: record.id,
+                        });
+                        actionRef.current?.reload();
+                      }}
+                    >
+                      闭馆
+                    </a>
+                  )}
+                </>
+              );
+            },
+          },
         ]}
-        // actionRef={actionRef}
+        actionRef={actionRef}
         cardBordered
         request={async (params, sort, filter) => {
           return await getLibraries(params)

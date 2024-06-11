@@ -12,6 +12,8 @@ namespace API {
       circumference: number;
 
       address: string;
+
+      closed: boolean;
     };
   }
 }

@@ -93,10 +93,12 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
             {
               dependencies: ['roleNames'],
               dataIndex: 'isBlacklist',
-              title: '是否黑名单',
+              title: '禁用',
               valueType: 'select',
-              valueEnum: { true: '是', false: '否' },
-              render: (dom, record) => (record.isBlacklist ? '是' : '否'),
+              valueEnum: {
+                true: { text: '是', status: 'Error' },
+                false: { text: '否', status: 'Success' },
+              },
             },
             {
               dataIndex: 'createdAt',
@@ -170,10 +172,7 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
                         );
                       }}
                     </ProFormDependency>
-                    <ProFormSwitch
-                      name={'isBlacklist'}
-                      label={'是否是黑名单'}
-                    />
+                    <ProFormSwitch name={'isBlacklist'} label={'禁用用户'} />
                   </ModalForm>
                 </>
               ),

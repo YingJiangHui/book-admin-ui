@@ -9,14 +9,18 @@ import {
 } from '@/services/book';
 import { getBooksInLibrary } from '@/services/library';
 import { Link } from '@@/exports';
-import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import {
+  CheckOutlined,
+  PlusOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons';
 import {
   ActionType,
   ModalForm,
   ProFormInstance,
   ProTable,
 } from '@ant-design/pro-components';
-import { Button, Image, Popconfirm, Space, Tag, message } from 'antd';
+import { Button, Image, Popconfirm, Space, message } from 'antd';
 import React, { memo, useRef } from 'react';
 
 type props = {
@@ -32,11 +36,12 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
       <ProTable<API.Book.Instance, Parameters<typeof getBooksInLibrary>[0]>
         bordered
         columns={[
-          { dataIndex: 'id', title: '编号' },
+          { dataIndex: 'id', title: '编号', search: false },
           //   图书封面
           {
             dataIndex: 'files',
             title: '封面',
+            search: false,
             render: (dom, record) => {
               return (
                 <Image
@@ -77,23 +82,58 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
             ellipsis: true,
             dataIndex: 'description',
             title: '描述',
+            search: false,
           },
           {
             dataIndex: 'available',
             title: '上架状态',
+            valueType: 'select',
+            valueEnum: {
+              true: { text: '已上架', status: 'Success' },
+              false: { text: '已下架', status: 'Error' },
+            },
+            // render: (dom, record) => {
+            //   return record.available ? (
+            //     <Tag bordered={false} color="success">
+            //       已上架
+            //     </Tag>
+            //   ) : (
+            //     <Tag bordered={false}>已下架</Tag>
+            //   );
+            // },
+          },
+          {
+            order: 1,
+            dataIndex: 'isRecommend',
+            title: '首页推荐',
+            valueType: 'select',
+            valueEnum: { true: { text: '是' }, false: { text: '否' } },
             render: (dom, record) => {
-              return record.available ? (
-                <Tag bordered={false} color="success">
-                  已上架
-                </Tag>
+              return record.isRecommend ? (
+                <CheckOutlined style={{ color: '#08c' }} />
               ) : (
-                <Tag bordered={false}>已下架</Tag>
+                '-'
+              );
+            },
+          },
+          {
+            order: 2,
+            dataIndex: 'isBanner',
+            title: '首页轮播',
+            valueType: 'select',
+            valueEnum: { true: { text: '是' }, false: { text: '否' } },
+            render: (dom, record) => {
+              return record.isBanner ? (
+                <CheckOutlined style={{ color: '#08c' }} />
+              ) : (
+                '-'
               );
             },
           },
           {
             dataIndex: 'action',
             title: '操作',
+            search: false,
             render: (_, record) => {
               return (
                 <Space>
@@ -197,7 +237,6 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
           },
         }}
         rowKey="id"
-        search={false}
         options={{
           setting: {
             listsHeight: 400,

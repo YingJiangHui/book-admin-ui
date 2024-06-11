@@ -20,6 +20,10 @@ namespace API {
       description: string;
 
       libraryId: number;
+
+      isRecommend: boolean;
+
+      isBanner: boolean;
     }
     type CreateParams = Omit<Instance, 'files'> & {
       file: { originFileObj: File }[];

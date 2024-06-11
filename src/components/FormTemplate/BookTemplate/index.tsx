@@ -3,11 +3,13 @@ import { getLibrariesAll } from '@/services/library';
 import {
   CaptFieldRef,
   ProForm,
+  ProFormCheckbox,
   ProFormSelect,
   ProFormText,
   ProFormTextArea,
   ProFormUploadButton,
 } from '@ant-design/pro-components';
+import { Col, Row } from 'antd';
 import React, { memo, useRef } from 'react';
 import useForm = ProForm.useForm;
 
@@ -66,6 +68,14 @@ export const BookFormTemplate: React.FC<
         name={'categoryId'}
       />
       <ProFormTextArea label={'描述'} name={'description'}></ProFormTextArea>
+      <Row gutter={24}>
+        <Col>
+          <ProFormCheckbox label={'作为首页推荐图书'} name={'isRecommend'} />
+        </Col>
+        <Col>
+          <ProFormCheckbox label={'作为首页轮播'} name={'isBanner'} />
+        </Col>
+      </Row>
     </>
   );
 });

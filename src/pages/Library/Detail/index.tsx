@@ -4,7 +4,7 @@ import { UserList } from '@/pages/User/User';
 import { getLibrary, postUpdateLibrary } from '@/services/library';
 import { useParams, useRequest, useSearchParams } from '@@/exports';
 import { PageContainer, ProCard } from '@ant-design/pro-components';
-import { Descriptions, message } from 'antd';
+import { Badge, Descriptions, message } from 'antd';
 import React, { memo } from 'react';
 
 type props = {};
@@ -83,6 +83,13 @@ export const LibraryDetail: React.FC<
           </Descriptions.Item>
           <Descriptions.Item label="范围(半径)">
             {libraryReq.data?.circumference}m
+          </Descriptions.Item>
+          <Descriptions.Item label="状态">
+            {libraryReq.data?.closed ? (
+              <Badge status={'error'} text={'闭馆'} />
+            ) : (
+              <Badge status={'success'} text={'正常'} />
+            )}
           </Descriptions.Item>
         </Descriptions>
       }
