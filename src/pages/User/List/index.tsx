@@ -32,7 +32,7 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
           actionRef={actionRef}
           bordered
           columns={[
-            { dataIndex: 'id', title: '编号', search: false },
+            { dataIndex: 'id', title: '编号' },
             {
               dataIndex: 'email',
               title: '账号',

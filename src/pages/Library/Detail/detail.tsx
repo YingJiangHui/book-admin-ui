@@ -1,22 +1,23 @@
 import { CustomAMap } from '@/components/CustomAMap';
-import BookList from '@/pages/Book/BookList';
-import { UserList } from '@/pages/User/User';
 import { getLibrary, postUpdateLibrary } from '@/services/library';
-import { useParams, useRequest, useSearchParams } from '@@/exports';
+import { useModel, useRequest, useSearchParams } from '@@/exports';
 import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { Badge, Descriptions, message } from 'antd';
 import React, { memo } from 'react';
 
-type props = {};
+type props = {
+  libraryId: number;
+};
 export type LibraryDetailProps = props;
 export const LibraryDetail: React.FC<
   React.PropsWithChildren<LibraryDetailProps>
 > = memo((props) => {
   // 获取图书馆id
-  const params = useParams<{ id: string }>();
-  const libraryId = params.id;
+  const { selectedLibrary } = useModel('currentLibrary');
+  const libraryId = selectedLibrary.id;
   const libraryReq = useRequest(getLibrary, {
     defaultParams: [{ id: libraryId! }],
+    refreshDeps: [selectedLibrary.id],
   });
   const [searchParams, setSearchParams] = useSearchParams({
     activeTab: 'location',
@@ -27,49 +28,6 @@ export const LibraryDetail: React.FC<
       onTabChange={(activeTab) => {
         setSearchParams({ activeTab }, { replace: true });
       }}
-      tabList={[
-        {
-          tab: '地理位置',
-          key: 'location',
-          children: (
-            <ProCard loading={libraryReq.loading}>
-              <CustomAMap
-                onFinish={async (values) => {
-                  await postUpdateLibrary({
-                    ...values,
-                    id: libraryReq.data?.id,
-                  });
-                  message.success('修改成功');
-                  libraryReq.refresh();
-                  return Promise.resolve(true);
-                }}
-                initialValues={libraryReq.data}
-              />
-            </ProCard>
-          ),
-        },
-        {
-          tab: '管理人员',
-          key: 'admin',
-          children: (
-            <ProCard loading={libraryReq.loading}>
-              <UserList
-                roles={['LIBRARY_ADMIN']}
-                libraryId={Number(libraryId)}
-              />
-            </ProCard>
-          ),
-        },
-        {
-          tab: '藏书',
-          key: 'book',
-          children: (
-            <ProCard loading={libraryReq.loading}>
-              <BookList libraryId={Number(libraryId)} />
-            </ProCard>
-          ),
-        },
-      ]}
       content={
         <Descriptions column={2}>
           <Descriptions.Item label="图书馆名称">
@@ -113,7 +71,20 @@ export const LibraryDetail: React.FC<
         },
       }}
     >
-      {/*图书馆基本信息*/}
+      <ProCard loading={libraryReq.loading}>
+        <CustomAMap
+          onFinish={async (values) => {
+            await postUpdateLibrary({
+              ...values,
+              id: libraryReq.data?.id,
+            });
+            message.success('修改成功');
+            libraryReq.refresh();
+            return Promise.resolve(true);
+          }}
+          initialValues={libraryReq.data}
+        />
+      </ProCard>
     </PageContainer>
   );
 });

@@ -27,7 +27,6 @@ export default defineConfig({
     AMap: 'window.AMap',
   },
   routes: [
-    {},
     // {
     //   path: '/library',
     //   name: '图书馆',
@@ -52,29 +51,40 @@ export default defineConfig({
       path: '/library',
       component: './Library/List',
       name: '图书馆',
+      access: 'canSystemAdmin',
     },
     {
       path: '/library/detail/:id',
-      component: './Library/Detail',
+      component: './Library/Detail/index',
       name: '图书馆详情',
-      //   在侧边栏隐藏
       hideInMenu: true,
+      access: 'canSystemAdmin',
     },
     {
       path: '/library/create',
       component: './Library/Create',
       hideInMenu: true,
       name: '创建图书馆',
+      access: 'canSystemAdmin',
     },
     {
-      path: '/category',
-      component: './Category/List',
-      name: '图书分类',
+      path: '/borrowings',
+      component: './Borrowings/index',
+      breadcrumbName: '借阅管理',
+      name: '借阅管理',
+      access: 'canAuth',
     },
     {
-      path: '/user',
+      path: '/reservations',
+      component: './Reservations/index',
+      name: '预约管理',
+      access: 'canAuth',
+    },
+    {
+      path: '/users',
       component: './User/List',
       name: '用户管理',
+      access: 'canAuth',
     },
     { path: '/register', component: './Auth/Register', layout: false },
     {
@@ -88,30 +98,60 @@ export default defineConfig({
       layout: false,
     },
     {
+      name: '数据统计',
+      path: '/library-admin/statistics',
+      component: './Statistics/SystemAdmin',
+      access: 'canLibraryAdminOnly',
+    },
+    {
+      name: '图书馆设置',
+      path: '/location',
+      component: './Library/Detail/detail',
+      access: 'canLibraryAdminOnly',
+    },
+    {
+      name: '图书馆藏书',
+      path: '/books',
+      component: './Book/index',
+      access: 'canLibraryAdminOnly',
+    },
+    {
+      name: '图书分类',
+      path: '/category',
+      component: './Category/List',
+      access: 'canAuth',
+    },
+    {
       name: '系统设置',
       path: '/system-settings',
       component: './SystemSettings/SystemSettings',
       access: 'canSystemAdmin',
     },
     {
+      path: '/reader',
+      component: './Reader/index',
+      name: '读者管理',
+      access: 'canLibraryAdminOnly',
+    },
+    {
       path: '/',
-      redirect: '/home',
+      redirect: '/system-admin/statistics',
     },
-    {
-      name: '首页',
-      path: '/home',
-      component: './Home',
-    },
-    {
-      name: '权限演示',
-      path: '/access',
-      component: './Access',
-    },
-    {
-      name: ' CRUD 示例',
-      path: '/table',
-      component: './Table',
-    },
+    // {
+    //   name: '首页',
+    //   path: '/home',
+    //   component: './Home',
+    // },
+    // {
+    //   name: '权限演示',
+    //   path: '/access',
+    //   component: './Access',
+    // },
+    // {
+    //   name: ' CRUD 示例',
+    //   path: '/table',
+    //   component: './Table',
+    // },
   ],
   npmClient: 'pnpm',
   proxy: {

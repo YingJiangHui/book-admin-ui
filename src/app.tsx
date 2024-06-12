@@ -5,11 +5,13 @@
 import { getUserInfo } from '@/services/user';
 import { toLogin } from '@/utils/helpers';
 import { storage } from '@/utils/store';
-import { BookTwoTone } from '@ant-design/icons';
+import { useAccess, useModel } from '@@/exports';
+import { BookTwoTone, DownOutlined } from '@ant-design/icons';
+import { ProLayoutProps } from '@ant-design/pro-components';
 import { RequestConfig } from '@umijs/max';
-import { Space, message } from 'antd';
+import { Dropdown, MenuProps, Space, message } from 'antd';
 import { AxiosError } from 'axios';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 const defaultInitialState: System.InitialState = { name: '图书管理系统' };
 export async function getInitialState(): Promise<System.InitialState> {
@@ -25,8 +27,51 @@ export async function getInitialState(): Promise<System.InitialState> {
   return { ...defaultInitialState, user: res?.data, token };
 }
 
-export const layout = () => {
+export const layout = (props: {
+  initialState: System.InitialState;
+}): ProLayoutProps => {
+  const access = useAccess();
+  const { selectedLibrary, setSelectedLibrary } = useModel('currentLibrary');
+  const items: MenuProps['items'] =
+    props.initialState.user?.managedLibraries?.map((item) => ({
+      key: item.id.toString(),
+      label: item.name,
+      onClick: () => setSelectedLibrary(item),
+      disabled: item.closed,
+    }));
+  console.log(props, 'props');
+  const title = useMemo(() => {
+    if (access.canSystemAdmin) {
+      return props.initialState.name;
+    }
+
+    if (access.canLibraryAdmin) {
+      return (
+        <div style={{ padding: -16 }} onClick={(e) => e.stopPropagation()}>
+          <Dropdown
+            trigger={['click']}
+            menu={{
+              items,
+              selectable: true,
+              activeKey: selectedLibrary?.id.toString(),
+            }}
+          >
+            <Space align={'baseline'}>
+              {selectedLibrary?.name}
+              <DownOutlined />
+            </Space>
+          </Dropdown>
+        </div>
+      );
+    }
+  }, [access, props.initialState.name]);
   return {
+    breadcrumbRender: (routes) => {
+      // `routes` 是一个包含所有路由信息的数组
+      // 你可以在这里自定义面包屑的渲染方式
+      return routes;
+    },
+    title: title as any,
     logo: <BookTwoTone />,
     menu: {
       locale: false,

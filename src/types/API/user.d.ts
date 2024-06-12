@@ -6,6 +6,7 @@ namespace API {
       email: string;
       roles: Role[];
       createdAt: string;
+      managedLibraries: API.Library.Instance[];
     };
     type Instance = {
       id: number;

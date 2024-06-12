@@ -36,7 +36,7 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
       <ProTable<API.Book.Instance, Parameters<typeof getBooksInLibrary>[0]>
         bordered
         columns={[
-          { dataIndex: 'id', title: '编号', search: false },
+          { dataIndex: 'id', title: '编号', order: 6 },
           //   图书封面
           {
             dataIndex: 'files',
@@ -57,6 +57,7 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
           {
             dataIndex: 'title',
             title: '书名',
+            order: 5,
             ellipsis: true,
             render: (dom, record) => {
               return <Link to={`/library/detail/${record.id}`}>{dom}</Link>;
@@ -103,7 +104,7 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
             // },
           },
           {
-            order: 1,
+            order: 3,
             dataIndex: 'isRecommend',
             title: '首页推荐',
             valueType: 'select',
@@ -117,7 +118,7 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
             },
           },
           {
-            order: 2,
+            order: 4,
             dataIndex: 'isBanner',
             title: '首页轮播',
             valueType: 'select',
