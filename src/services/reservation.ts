@@ -1,14 +1,18 @@
 import { request } from '@@/exports';
 
-export const getReservations = (params: {}) => {
-  return request<API.Common.Result<API.Reservation.Instance[]>>(
-    '/api/books/reservation',
+export const getReservations = (
+  params: API.Common.ParamsWithPagination<{
+    status?: API.Reservation.Instance['status'][];
+    libraryId: number;
+  }>,
+) =>
+  request<API.Common.ResultWithPagination<API.Reservation.Instance>>(
+    '/api/books/reservation/all',
     {
       method: 'GET',
-      params: params,
+      params,
     },
   );
-};
 
 export const cancelReservations = (params: { ids: (number | string)[] }) => {
   return request('/api/books/reservation/cancel', {

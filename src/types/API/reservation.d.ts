@@ -14,6 +14,7 @@ namespace API {
       borrowedAt: string;
       returnedAt: string;
       book: API.Book.Instance;
+      user: API.User.Instance;
     };
   }
 }
