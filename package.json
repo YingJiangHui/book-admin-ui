@@ -19,6 +19,7 @@
     "antd": "^5.4.0"
   },
   "devDependencies": {
+    "@types/echarts": "^4.9.22",
     "@types/react": "^18.0.33",
     "@types/react-dom": "^18.0.11",
     "husky": "^9",

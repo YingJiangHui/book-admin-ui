@@ -9,9 +9,13 @@ export default function CurrentLibrary() {
   console.log(user, 'user');
   const [selectedLibrary, setSelectedLibrary] = useLocalStorageState<
     API.Library.Instance | undefined
-  >('current-library');
+  >('current-library', {
+    serializer: (value) => (value ? JSON.stringify(value) : ''),
+    deserializer: (value) => (value ? JSON.parse(value) : undefined),
+  });
 
   useEffect(() => {
+    console.log(user?.managedLibraries?.filter((item) => !item.closed)[0]);
     if (user?.managedLibraries)
       setSelectedLibrary(
         user?.managedLibraries?.filter((item) => !item.closed)[0],
