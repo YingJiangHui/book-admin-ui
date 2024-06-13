@@ -25,7 +25,7 @@ export const getBorrowings = (
     },
   );
 
-export const returnBook = (params: { borrowingIds: number }) => {
+export const returnBook = (params: { borrowingIds: number[] }) => {
   return request<API.Common.Result<API.Book.Instance>>(
     `/api/books/borrowing/return`,
     {

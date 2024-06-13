@@ -60,7 +60,9 @@ export const CategoryListPage: React.FC<
                     });
                   }}
                 >
-                  <a>删除</a>
+                  <Button style={{ padding: '0 4px 0 0' }} type={'link'}>
+                    删除
+                  </Button>
                 </Popconfirm>
               </>
             ),

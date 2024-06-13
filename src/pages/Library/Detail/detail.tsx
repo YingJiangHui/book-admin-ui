@@ -14,11 +14,13 @@ export const LibraryDetail: React.FC<
 > = memo((props) => {
   // 获取图书馆id
   const { selectedLibrary } = useModel('currentLibrary');
-  const libraryId = selectedLibrary.id;
-  const libraryReq = useRequest(getLibrary, {
-    defaultParams: [{ id: libraryId! }],
-    refreshDeps: [selectedLibrary.id],
-  });
+  const libraryReq = useRequest(
+    () => getLibrary({ id: selectedLibrary?.id! }),
+    {
+      // defaultParams: [{ id: libraryId! }],
+      refreshDeps: [selectedLibrary?.id],
+    },
+  );
   const [searchParams, setSearchParams] = useSearchParams({
     activeTab: 'location',
   });

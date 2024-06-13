@@ -20,7 +20,7 @@ export const ReaderList: React.FC<React.PropsWithChildren<ReaderListProps>> =
         <ProTable<API.User.Instance, Parameters<typeof getUsers>[0]>
           params={{
             roleNames: Constants.Role.RoleEnum.READER,
-            libraryIds: selectedLibrary.id ? selectedLibrary.id : undefined,
+            libraryIds: selectedLibrary?.id ? selectedLibrary.id : undefined,
           }}
           actionRef={actionRef}
           bordered

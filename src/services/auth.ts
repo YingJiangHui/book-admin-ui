@@ -44,3 +44,9 @@ export const sendInviteCode = (params: inviteRegisterReq) =>
     data: params,
     method: 'POST',
   });
+
+export const logoutUser = () => {
+  return request('/api/auth/logout', {
+    method: 'POST',
+  });
+};

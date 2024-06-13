@@ -130,7 +130,11 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
                       isBlacklist: record.isBlacklist,
                       libraryIds: record.libraries.map((item) => item.id),
                     }}
-                    trigger={<a>调整</a>}
+                    trigger={
+                      <Button style={{ padding: '0 4px 0 0' }} type={'link'}>
+                        调整
+                      </Button>
+                    }
                   >
                     <ProFormSelect
                       mode={'multiple'}

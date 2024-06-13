@@ -1,7 +1,13 @@
-import { getBorrowings } from '@/services/borrowing';
+import { getBorrowings, returnBook } from '@/services/borrowing';
 import { Link, useAccess, useModel } from '@@/exports';
-import { PageContainer, ProTable } from '@ant-design/pro-components';
-import React, { memo } from 'react';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import {
+  ActionType,
+  PageContainer,
+  ProTable,
+} from '@ant-design/pro-components';
+import { Button, Popconfirm, message } from 'antd';
+import React, { memo, useRef } from 'react';
 
 type props = {};
 export type BorrowingsProps = props;
@@ -9,6 +15,7 @@ export const Borrowings: React.FC<React.PropsWithChildren<BorrowingsProps>> =
   memo((props) => {
     const { selectedLibrary } = useModel('currentLibrary');
     const access = useAccess();
+    const actionRef = useRef<ActionType>();
     return (
       <PageContainer header={{ title: '借阅管理' }}>
         <ProTable<
@@ -18,6 +25,7 @@ export const Borrowings: React.FC<React.PropsWithChildren<BorrowingsProps>> =
             libraryId: number;
           }
         >
+          actionRef={actionRef}
           bordered
           form={{
             // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
@@ -79,6 +87,38 @@ export const Borrowings: React.FC<React.PropsWithChildren<BorrowingsProps>> =
                 OVERDUE_NOT_RETURNED: { text: '已逾期', status: 'error' },
                 NOT_RETURNED: { text: '未归还', status: 'warning' },
                 OVERDUE_RETURNED: { text: '逾期已归还', status: 'success' },
+              },
+            },
+            {
+              title: '操作',
+              dataIndex: 'actions',
+              search: false,
+              render: (dom, record) => {
+                const cantBorrowed = !!record.returnedAt;
+                return (
+                  <>
+                    <Popconfirm
+                      disabled={cantBorrowed}
+                      title="提示"
+                      description="确认是否归还图书"
+                      icon={<QuestionCircleOutlined />}
+                      onConfirm={() => {
+                        returnBook({ borrowingIds: [record.id] }).then(() => {
+                          message.success('操作成功');
+                          actionRef.current?.reload();
+                        });
+                      }}
+                    >
+                      <Button
+                        style={{ padding: '0 4px 0 0' }}
+                        type={'link'}
+                        disabled={cantBorrowed}
+                      >
+                        归还
+                      </Button>
+                    </Popconfirm>
+                  </>
+                );
               },
             },
           ]}

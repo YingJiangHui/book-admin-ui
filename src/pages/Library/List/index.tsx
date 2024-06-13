@@ -16,7 +16,7 @@ export default () => {
       <ProTable<any, API.Library.Instance>
         bordered
         columns={[
-          { dataIndex: 'id', title: '编号' },
+          { dataIndex: 'id', title: '编号', width: '6rem' },
           {
             dataIndex: 'name',
             title: '图书馆',
@@ -27,11 +27,13 @@ export default () => {
           {
             dataIndex: 'address',
             title: '地址',
+            width: '14rem',
             ellipsis: true,
           },
           {
             dataIndex: 'coords',
             title: '坐标',
+            width: '10rem',
             render: (_, record) => `${record.longitude},${record.latitude}`,
             search: false,
           },
@@ -56,7 +58,9 @@ export default () => {
               return (
                 <>
                   {record.closed ? (
-                    <a
+                    <Button
+                      style={{ padding: '0 4px 0 0' }}
+                      type={'link'}
                       onClick={async () => {
                         await postUpdateLibrary({
                           closed: false,
@@ -66,9 +70,11 @@ export default () => {
                       }}
                     >
                       开馆
-                    </a>
+                    </Button>
                   ) : (
-                    <a
+                    <Button
+                      style={{ padding: '0 4px 0 0' }}
+                      type={'link'}
                       onClick={async () => {
                         await postUpdateLibrary({
                           closed: true,
@@ -78,7 +84,7 @@ export default () => {
                       }}
                     >
                       闭馆
-                    </a>
+                    </Button>
                   )}
                 </>
               );

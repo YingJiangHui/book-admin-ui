@@ -30,13 +30,14 @@ export type BookListProps = props;
 export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
   (props) => {
     const { libraryId } = props;
+    console.log(libraryId, 'libraryId');
     const actionRef = useRef<ActionType>();
     const formRef = useRef<ProFormInstance>();
     return (
       <ProTable<API.Book.Instance, Parameters<typeof getBooksInLibrary>[0]>
         bordered
         columns={[
-          { dataIndex: 'id', title: '编号', order: 6 },
+          { dataIndex: 'id', title: '编号', order: 6, width: '5rem' },
           //   图书封面
           {
             dataIndex: 'files',
@@ -57,6 +58,7 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
           {
             dataIndex: 'title',
             title: '书名',
+            width: '10rem',
             order: 5,
             ellipsis: true,
             render: (dom, record) => {
@@ -66,10 +68,12 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
           {
             dataIndex: 'isbn',
             title: 'ISBN',
+            width: '9rem',
           },
           {
             dataIndex: 'author',
             title: '作者',
+            width: '10rem',
           },
           {
             dataIndex: 'publisher',
@@ -137,7 +141,7 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
             search: false,
             render: (_, record) => {
               return (
-                <Space>
+                <Space style={{ gap: 0 }}>
                   {record.available ? (
                     <Popconfirm
                       title="下架"
@@ -150,7 +154,9 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
                         })
                       }
                     >
-                      <a>下架</a>
+                      <Button style={{ padding: '0 4px 0 0' }} type={'link'}>
+                        下架
+                      </Button>
                     </Popconfirm>
                   ) : (
                     <Popconfirm
@@ -164,7 +170,9 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
                         })
                       }
                     >
-                      <a>上架</a>
+                      <Button style={{ padding: '0 4px 0 0' }} type={'link'}>
+                        上架
+                      </Button>
                     </Popconfirm>
                   )}
                   <ModalForm<
@@ -207,7 +215,11 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
                       //   '“人的一生不知要遇到多少人与事，到了我这个岁数，经历过军阀混战、抗日战争、解放战争，以及新中国成立之后发生的种种，我虽是个平凡的人，却也有许许多多的人可念，许许多多的事想说。”\\n\\n本书是五四运动同龄人、西南联大进步学子、翻译名家、百岁老人杨苡的唯一口述自传。从1919年走向今天，杨苡的人生百年，正是中国栉风沐雨、沧桑巨变的百年。时代与人生的淬炼，凝结为一代知识女性的天真与浪漫之歌。\\n\\n世纪回眸中，相比于传奇与成就，杨苡更看重她的“日子”，及其承载的亲情、友情、爱情和世情：童年深宅里，祖辈的煊赫、北洋政商两界的风云变幻她不大闹得清，念念不忘者，是一个个普通人的境遇；同窗情谊、少女心事、诗歌与话剧，“中西”十年乘着歌声的翅膀，最是无忧无虑；民族危亡之际，自天津、上海、香港到昆明，西迁途中高唱《松花江上》，文明之火光焰不熄；从西南联大到中央大学，记忆里依旧是年轻的身影——初见“文学偶像”巴金，大轰炸后满头灰土的闻一多，手杖点在石板路上嘀嘀笃笃的吴宓，“夸我们是勇敢少女”的恩师沈从文，还有滇水之边的月下谈心，嘉陵江畔的重逢与告别……\\n\\n学者余斌历时十年，用倾听抵抗遗忘，以细节通向历史的真实。家族旧事、翡翠年华、求学之路、山河故人，一个世纪的人与事在叙述中缓缓展开。“我有意无意间充当了杨先生和读者的中间人，它应该是一部可以面向一般读者的口述史。”',
                     }}
                     title={'图书编辑'}
-                    trigger={<a>编辑</a>}
+                    trigger={
+                      <Button style={{ padding: '0 4px 0 0' }} type={'link'}>
+                        编辑
+                      </Button>
+                    }
                   >
                     <BookFormTemplate />
                   </ModalForm>

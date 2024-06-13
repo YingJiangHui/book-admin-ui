@@ -15,6 +15,8 @@ namespace API {
       returnedAt: string;
       book: API.Book.Instance;
       user: API.User.Instance;
+      borrowingId: number;
+      deleted: boolean;
     };
   }
 }

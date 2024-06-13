@@ -12,8 +12,10 @@ export const getUsers = (
     params,
   });
 
-export const getUserInfo = () =>
-  request<API.Common.Result<API.User.Current>>('/api/users/current');
+export const getUserInfo = (config?: { skipErrorHandler: boolean }) =>
+  request<API.Common.Result<API.User.Current>>('/api/users/current', {
+    ...config,
+  });
 
 export const updateUserInfo = (params: {
   id: number;

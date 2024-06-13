@@ -2,14 +2,21 @@
 
 // 全局初始化数据配置，用于 Layout 用户信息和权限初始化
 // 更多信息见文档：https://umijs.org/docs/api/runtime-config#getinitialstate
+import { Constants } from '@/constants';
+import { logoutUser } from '@/services/auth';
 import { getUserInfo } from '@/services/user';
 import { toLogin } from '@/utils/helpers';
 import { storage } from '@/utils/store';
 import { useAccess, useModel } from '@@/exports';
-import { BookTwoTone, DownOutlined } from '@ant-design/icons';
+import {
+  BookTwoTone,
+  DownOutlined,
+  LogoutOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { ProLayoutProps } from '@ant-design/pro-components';
 import { RequestConfig } from '@umijs/max';
-import { Dropdown, MenuProps, Space, message } from 'antd';
+import { Dropdown, MenuProps, Space, Tag, message } from 'antd';
 import { AxiosError } from 'axios';
 import React, { useMemo } from 'react';
 
@@ -20,10 +27,31 @@ export async function getInitialState(): Promise<System.InitialState> {
     toLogin();
     return defaultInitialState;
   }
-  const res = await getUserInfo().catch(() => {
-    // toLogin();
-    return null;
-  });
+  const res = await getUserInfo(
+    window.location.pathname === '/login'
+      ? { skipErrorHandler: true }
+      : undefined,
+  )
+    .then((res) => {
+      if (
+        !res.data.roles.find(
+          (role) => role === Constants.Role.RoleEnum.LIBRARY_ADMIN,
+        )
+      )
+        return res;
+      storage.set(
+        'current-library',
+        JSON.stringify(
+          res.data.managedLibraries?.filter?.((item) => !item.closed)[0],
+        ),
+      );
+      return { ...res };
+    })
+    .catch((res) => {
+      // toLogin();
+      return null;
+    });
+
   return { ...defaultInitialState, user: res?.data, token };
 }
 
@@ -31,6 +59,7 @@ export const layout = (props: {
   initialState: System.InitialState;
 }): ProLayoutProps => {
   const access = useAccess();
+  const { refresh } = useModel('@@initialState');
   const { selectedLibrary, setSelectedLibrary } = useModel('currentLibrary');
   const items: MenuProps['items'] =
     props.initialState.user?.managedLibraries?.map((item) => ({
@@ -57,20 +86,77 @@ export const layout = (props: {
             }}
           >
             <Space align={'baseline'}>
-              {selectedLibrary?.name}
+              {selectedLibrary?.name || '无可用图书馆'}
               <DownOutlined />
             </Space>
           </Dropdown>
         </div>
       );
     }
-  }, [access, props.initialState.name]);
+
+    return props.initialState.name;
+  }, [access, props.initialState.name, selectedLibrary]);
   return {
+    avatarProps: {
+      size: 'small',
+      icon: <UserOutlined />,
+      title: (
+        <Space direction={'vertical'}>
+          {props.initialState.user?.email}
+          {access.canLibraryAdminOnly ? (
+            <Space size={'small'} wrap>
+              <Tag>图书馆管理员</Tag>
+            </Space>
+          ) : access.canSystemAdmin ? (
+            <Space size={'small'} wrap>
+              <Tag>系统管理员</Tag>
+            </Space>
+          ) : undefined}
+        </Space>
+      ),
+
+      render: (props, dom) => {
+        return (
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: 'logout',
+                  icon: <LogoutOutlined />,
+                  label: '退出登录',
+                  // src: 'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
+                  onClick: () => {
+                    logoutUser().then(refresh).then(toLogin);
+                  },
+                },
+              ],
+            }}
+          >
+            {dom}
+          </Dropdown>
+        );
+      },
+    },
+    // menuFooterRender: (props) => {
+    //   if (props?.collapsed) return undefined;
+    //   return (
+    //     <div
+    //       style={{
+    //         textAlign: 'center',
+    //         paddingBlockStart: 12,
+    //       }}
+    //     >
+    //       <div>© 2021 Made with love</div>
+    //       <div>by Ant Design</div>
+    //     </div>
+    //   );
+    // },
     breadcrumbRender: (routes) => {
       // `routes` 是一个包含所有路由信息的数组
       // 你可以在这里自定义面包屑的渲染方式
       return routes;
     },
+    rightContentRender: false,
     title: title as any,
     logo: <BookTwoTone />,
     menu: {
@@ -105,12 +191,12 @@ export const request: RequestConfig = {
         ),
       };
       const result = statusMap[error.response.status as number]?.();
-      if (
-        error.response.status === 401 &&
-        window.location.pathname === '/login'
-      ) {
-        throw error.response.data;
-      }
+      // if (
+      //   error.response.status === 401 &&
+      //   window.location.pathname === '/login'
+      // ) {
+      //   throw error.response.data;
+      // }
 
       if (React.isValidElement(result)) {
         message.error(result);

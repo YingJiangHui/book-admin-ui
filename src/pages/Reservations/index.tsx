@@ -1,3 +1,4 @@
+import { borrowBookFormReservations } from '@/services/borrowing';
 import { cancelReservations, getReservations } from '@/services/reservation';
 import { Link, useAccess, useModel } from '@@/exports';
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -6,7 +7,7 @@ import {
   PageContainer,
   ProTable,
 } from '@ant-design/pro-components';
-import { Popconfirm, message } from 'antd';
+import { Button, Popconfirm, message } from 'antd';
 import React, { memo, useRef } from 'react';
 
 type props = {};
@@ -59,8 +60,8 @@ export const Reservations: React.FC<
           },
           {
             title: '借阅用户',
+            key: 'email',
             dataIndex: ['user', 'email'],
-            search: false,
             render: (dom, record) =>
               access.canLibraryAdminOnly ? (
                 <Link to={`/reader?id=${record.user.id}`}>{dom}</Link>
@@ -86,29 +87,65 @@ export const Reservations: React.FC<
             valueEnum: {
               NOT_BORROWABLE: { text: '未到借阅日期', status: 'default' },
               BORROWABLE: { text: '待取书', status: 'warning' },
-              CANCELLED: { text: '已取消', status: 'default' },
+              CANCELED: { text: '已取消', status: 'default' },
               FULFILLED: { text: '已取书', status: 'success' },
-              EXPIRED: { text: '未按时取书', status: 'danger' },
+              EXPIRED: { text: '未按时取书', status: 'error' },
             },
           },
           {
             title: '操作',
             dataIndex: 'actions',
+            search: false,
             render: (dom, record) => {
+              const cantCancelled =
+                !!record.borrowingId || record.deleted === true;
+              const cantBorrow =
+                !!record.borrowingId || record.deleted === true;
               return (
-                <Popconfirm
-                  title="提示"
-                  description="确认是否取消用户的预约请求"
-                  icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                  onConfirm={() => {
-                    cancelReservations({ ids: [record.id] }).then(() => {
-                      message.success('操作成功');
-                      actionRef.current?.reload();
-                    });
-                  }}
-                >
-                  <a>取消</a>
-                </Popconfirm>
+                <>
+                  <Popconfirm
+                    disabled={cantCancelled}
+                    title="提示"
+                    description="确认是否取消用户的预约请求"
+                    icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                    onConfirm={() => {
+                      cancelReservations({ ids: [record.id] }).then(() => {
+                        message.success('操作成功');
+                        actionRef.current?.reload();
+                      });
+                    }}
+                  >
+                    <Button
+                      style={{ padding: '0 4px 0 0' }}
+                      type={'link'}
+                      disabled={cantCancelled}
+                    >
+                      取消
+                    </Button>
+                  </Popconfirm>
+                  <Popconfirm
+                    disabled={cantBorrow}
+                    title="提示"
+                    description="确认是否借阅图书"
+                    icon={<QuestionCircleOutlined />}
+                    onConfirm={() => {
+                      borrowBookFormReservations({
+                        reservationIds: [record.id],
+                      }).then(() => {
+                        message.success('操作成功');
+                        actionRef.current?.reload();
+                      });
+                    }}
+                  >
+                    <Button
+                      style={{ padding: '0 4px 0 0' }}
+                      type={'link'}
+                      disabled={cantBorrow}
+                    >
+                      借阅
+                    </Button>
+                  </Popconfirm>
+                </>
               );
             },
           },
