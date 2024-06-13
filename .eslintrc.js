@@ -5,5 +5,6 @@ module.exports = {
     '@typescript-eslint/ban-types': 'off',
     '@typescript-eslint/no-empty-interface': 'off',
     'react-hooks/rules-of-hooks': 'off',
+    '@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
   },
 };
