@@ -14,6 +14,10 @@ namespace API {
       address: string;
 
       closed: boolean;
+
+      disableBorrow: boolean;
+
+      disableReserve: boolean;
     };
   }
 }

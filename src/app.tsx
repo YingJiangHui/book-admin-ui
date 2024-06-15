@@ -39,12 +39,11 @@ export async function getInitialState(): Promise<System.InitialState> {
         )
       )
         return res;
-      storage.set(
-        'current-library',
-        JSON.stringify(
-          res.data.managedLibraries?.filter?.((item) => !item.closed)[0],
-        ),
-      );
+      if (res.data.managedLibraries?.[0])
+        storage.set(
+          'current-library',
+          JSON.stringify(res.data.managedLibraries?.[0]),
+        );
       return { ...res };
     })
     .catch((res) => {

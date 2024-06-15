@@ -1,4 +1,4 @@
-import { getLibraries, postUpdateLibrary } from '@/services/library';
+import { getLibraries } from '@/services/library';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   ActionType,
@@ -50,46 +50,46 @@ export default () => {
               false: { text: '正常', status: 'Success' },
             },
           },
-          {
-            dataIndex: 'actions',
-            title: '操作',
-            search: false,
-            render: (_, record) => {
-              return (
-                <>
-                  {record.closed ? (
-                    <Button
-                      style={{ padding: '0 4px 0 0' }}
-                      type={'link'}
-                      onClick={async () => {
-                        await postUpdateLibrary({
-                          closed: false,
-                          id: record.id,
-                        });
-                        actionRef.current?.reload();
-                      }}
-                    >
-                      开馆
-                    </Button>
-                  ) : (
-                    <Button
-                      style={{ padding: '0 4px 0 0' }}
-                      type={'link'}
-                      onClick={async () => {
-                        await postUpdateLibrary({
-                          closed: true,
-                          id: record.id,
-                        });
-                        actionRef.current?.reload();
-                      }}
-                    >
-                      闭馆
-                    </Button>
-                  )}
-                </>
-              );
-            },
-          },
+          // {
+          //   dataIndex: 'actions',
+          //   title: '操作',
+          //   search: false,
+          //   render: (_, record) => {
+          //     return (
+          //       <>
+          //         {record.closed ? (
+          //           <Button
+          //             style={{ padding: '0 4px 0 0' }}
+          //             type={'link'}
+          //             onClick={async () => {
+          //               await postUpdateLibrary({
+          //                 closed: false,
+          //                 id: record.id,
+          //               });
+          //               actionRef.current?.reload();
+          //             }}
+          //           >
+          //             开馆
+          //           </Button>
+          //         ) : (
+          //           <Button
+          //             style={{ padding: '0 4px 0 0' }}
+          //             type={'link'}
+          //             onClick={async () => {
+          //               await postUpdateLibrary({
+          //                 closed: true,
+          //                 id: record.id,
+          //               });
+          //               actionRef.current?.reload();
+          //             }}
+          //           >
+          //             闭馆
+          //           </Button>
+          //         )}
+          //       </>
+          //     );
+          //   },
+          // },
         ]}
         actionRef={actionRef}
         cardBordered

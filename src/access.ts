@@ -15,10 +15,6 @@ export default (initialState: System.InitialState) => {
     canAuth: !!initialState.user,
     canSystemAdmin: canSystemAdmin,
     canLibraryAdmin: canLibraryAdmin,
-    canLibraryAdminOnly:
-      canLibraryAdmin &&
-      !canSystemAdmin &&
-      initialState.user?.managedLibraries.filter((lib) => !lib.closed)
-        .length !== 0,
+    canLibraryAdminOnly: canLibraryAdmin && !canSystemAdmin,
   };
 };

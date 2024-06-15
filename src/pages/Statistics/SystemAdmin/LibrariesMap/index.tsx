@@ -8,7 +8,7 @@ export const LibrariesMap: React.FC<
   React.PropsWithChildren<LibrariesMapProps>
 > = memo((props) => {
   const ref = useRef<HTMLDivElement>();
-  const libraryAllReq = useRequest(getLibrariesAll, {
+  const libraryAllReq = useRequest(() => getLibrariesAll(), {
     onSuccess: (res) => {
       let myChart = window.echarts.init(ref.current!);
 

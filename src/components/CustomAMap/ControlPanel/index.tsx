@@ -1,13 +1,15 @@
 import { searchPoi } from '@/utils/AMap';
 import {
   ProForm,
+  ProFormDependency,
   ProFormDigit,
   ProFormProps,
   ProFormSelect,
+  ProFormSwitch,
   ProFormText,
   ProFormTextArea,
 } from '@ant-design/pro-components';
-import { Space } from 'antd';
+import { Col, Row, Space } from 'antd';
 import React, { memo } from 'react';
 
 export type AMapControlValueType = {
@@ -16,6 +18,9 @@ export type AMapControlValueType = {
   coords: string;
   circumference: number;
   address: string;
+  disableReserve: boolean;
+  disableBorrow: boolean;
+  closed: boolean;
 };
 
 type props = {} & ProFormProps<AMapControlValueType>;
@@ -23,12 +28,21 @@ export type ControlPanelProps = props;
 export const ControlPanel: React.FC<
   React.PropsWithChildren<ControlPanelProps>
 > = memo((props) => {
-  const { onChange, initialValues, form, ...rest } = props;
+  const { onChange, onValuesChange, initialValues, form, ...rest } = props;
   console.log(initialValues, 'initialValues');
   return (
     <>
       <ProForm<AMapControlValueType>
         {...rest}
+        onValuesChange={(changedValues, values) => {
+          onValuesChange?.(changedValues, values);
+          if (changedValues.closed) {
+            form?.setFieldsValue({
+              disableBorrow: true,
+              disableReserve: true,
+            });
+          }
+        }}
         submitter={{
           render: (props, dom) => {
             const submitUI = dom[1];
@@ -94,6 +108,39 @@ export const ControlPanel: React.FC<
           initialValue={100}
           label={'范围（半径m）'}
         />
+        <Row>
+          <Col>
+            <ProFormDependency name={['closed']}>
+              {({ closed }) => (
+                <ProFormSwitch
+                  disabled={closed}
+                  name={'disableReserve'}
+                  initialValue={false}
+                  label={'关闭预约'}
+                />
+              )}
+            </ProFormDependency>
+          </Col>
+          <Col>
+            <ProFormDependency name={['closed']}>
+              {({ closed }) => (
+                <ProFormSwitch
+                  disabled={closed}
+                  name={'disableBorrow'}
+                  initialValue={false}
+                  label={'关闭借阅'}
+                />
+              )}
+            </ProFormDependency>
+          </Col>
+          <Col>
+            <ProFormSwitch
+              name={'closed'}
+              initialValue={false}
+              label={'闭馆'}
+            />
+          </Col>
+        </Row>
       </ProForm>
     </>
   );

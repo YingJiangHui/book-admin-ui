@@ -1,7 +1,8 @@
 import { useLoading } from '@/hooks/useLoading';
 import { LoginReq, postLogin } from '@/services/auth';
+import { waitTimePromise } from '@/utils/helpers';
 import { storage } from '@/utils/store';
-import { history, useSearchParams } from '@@/exports';
+import { useNavigate, useSearchParams } from '@@/exports';
 import { BookTwoTone, LockOutlined, MailOutlined } from '@ant-design/icons';
 import {
   LoginForm,
@@ -26,6 +27,7 @@ export default () => {
     verticalAlign: 'middle',
     cursor: 'pointer',
   };
+  const navigate = useNavigate();
   const [onFinish, loading] = useLoading(async (values: LoginReq) => {
     console.log(values);
     const res = await postLogin(values);
@@ -33,7 +35,9 @@ export default () => {
     storage.set('token', res.data);
     await initialState.refresh();
     const redirectTo = searchParams.get('redirectTo');
-    history.replace({ pathname: redirectTo ? redirectTo : '/' });
+    // history.replace({ pathname: redirectTo ? redirectTo : '/' });
+    await waitTimePromise(500);
+    navigate(redirectTo ? redirectTo : '/', { replace: true });
   });
   return (
     <ProConfigProvider hashed={false}>

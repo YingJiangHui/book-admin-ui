@@ -117,6 +117,8 @@ export const CustomAMap: React.FC<React.PropsWithChildren<CustomAMapProps>> =
             padding: 12,
             borderRadius: 5,
             width: 300,
+            maxHeight: 'calc(100% - 32px)',
+            overflow: 'auto',
           }}
         >
           <ControlPanel
@@ -131,6 +133,9 @@ export const CustomAMap: React.FC<React.PropsWithChildren<CustomAMapProps>> =
                 longitude: longitude,
                 circumference: values.circumference,
                 address: values.address,
+                disableBorrow: values.disableBorrow,
+                disableReserve: values.disableReserve,
+                closed: values.closed,
               });
             }}
             form={form}

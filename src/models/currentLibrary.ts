@@ -15,11 +15,7 @@ export default function CurrentLibrary() {
   });
 
   useEffect(() => {
-    console.log(user?.managedLibraries?.filter((item) => !item.closed)[0]);
-    if (user?.managedLibraries)
-      setSelectedLibrary(
-        user?.managedLibraries?.filter((item) => !item.closed)[0],
-      );
+    if (user?.managedLibraries) setSelectedLibrary(user?.managedLibraries?.[0]);
   }, [user?.managedLibraries]);
 
   return {
