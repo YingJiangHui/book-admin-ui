@@ -1,25 +1,22 @@
 import { borrowBookFormReservations } from '@/services/borrowing';
 import { cancelReservations, getReservations } from '@/services/reservation';
-import { Link, useAccess, useModel } from '@@/exports';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import {
-  ActionType,
-  PageContainer,
-  ProTable,
-} from '@ant-design/pro-components';
+import { ActionType, ProTable } from '@ant-design/pro-components';
 import { Button, Popconfirm, message } from 'antd';
 import React, { memo, useRef } from 'react';
 
-type props = {};
-export type ReservationsProps = props;
-export const Reservations: React.FC<
-  React.PropsWithChildren<ReservationsProps>
+type props = {
+  libraryId: number;
+};
+export type reservationListProps = props;
+export const ReservationList: React.FC<
+  React.PropsWithChildren<reservationListProps>
 > = memo((props) => {
-  const { selectedLibrary } = useModel('currentLibrary');
-  const access = useAccess();
+  const { libraryId } = props;
   const actionRef = useRef<ActionType>();
+
   return (
-    <PageContainer header={{ title: '预订管理' }}>
+    <>
       <ProTable<
         API.Reservation.Instance,
         {
@@ -41,7 +38,7 @@ export const Reservations: React.FC<
             return values;
           },
         }}
-        params={{ libraryId: selectedLibrary?.id }}
+        params={{ libraryId: libraryId }}
         columns={[
           { title: '预订编号', dataIndex: 'id', search: false },
           { title: '图书编号', dataIndex: ['book', 'id'], key: 'bookId' },
@@ -49,9 +46,6 @@ export const Reservations: React.FC<
             title: '书名',
             dataIndex: ['book', 'title'],
             key: 'title',
-            render: (dom, record) => (
-              <Link to={`/books?id=${record.book.id}`}>{dom}</Link>
-            ),
           },
           {
             title: 'ISBN',
@@ -62,12 +56,7 @@ export const Reservations: React.FC<
             title: '借阅用户',
             key: 'email',
             dataIndex: ['user', 'email'],
-            render: (dom, record) =>
-              access.canLibraryAdminOnly ? (
-                <Link to={`/reader?id=${record.user.id}`}>{dom}</Link>
-              ) : (
-                <Link to={`/users?id=${record.user.id}`}>{dom}</Link>
-              ),
+            render: (dom, record) => dom,
           },
           {
             title: '预订借阅日期',
@@ -157,9 +146,7 @@ export const Reservations: React.FC<
           }));
         }}
       />
-    </PageContainer>
+    </>
   );
 });
-Reservations.displayName = '预订管理';
-
-export default Reservations;
+ReservationList.displayName = '预订列表';

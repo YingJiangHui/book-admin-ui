@@ -1,31 +1,30 @@
-import { borrowBookFormReservations } from '@/services/borrowing';
-import { cancelReservations, getReservations } from '@/services/reservation';
+import { Constants } from '@/constants';
+import {
+  cancelReservationApplication,
+  fulfillReservationApplication,
+  getReservationBookApplication,
+  resendNotification,
+} from '@/services/reservationApplication';
 import { Link, useAccess, useModel } from '@@/exports';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import {
-  ActionType,
-  PageContainer,
-  ProTable,
-} from '@ant-design/pro-components';
+import { ActionType, ProTable } from '@ant-design/pro-components';
 import { Button, Popconfirm, message } from 'antd';
 import React, { memo, useRef } from 'react';
 
 type props = {};
-export type ReservationsProps = props;
-export const Reservations: React.FC<
-  React.PropsWithChildren<ReservationsProps>
+export type ReservationApplicationProps = props;
+export const ReservationApplication: React.FC<
+  React.PropsWithChildren<ReservationApplicationProps>
 > = memo((props) => {
   const { selectedLibrary } = useModel('currentLibrary');
   const access = useAccess();
   const actionRef = useRef<ActionType>();
+  const libraryId = selectedLibrary?.id;
   return (
-    <PageContainer header={{ title: '预订管理' }}>
+    <>
       <ProTable<
-        API.Reservation.Instance,
-        {
-          status?: API.Reservation.Instance['status'][];
-          libraryId?: number;
-        }
+        API.ReservationApplication.Instance,
+        Parameters<typeof getReservationBookApplication>[0]
       >
         actionRef={actionRef}
         bordered
@@ -41,25 +40,25 @@ export const Reservations: React.FC<
             return values;
           },
         }}
-        params={{ libraryId: selectedLibrary?.id }}
+        params={{ libraryId: libraryId }}
         columns={[
-          { title: '预订编号', dataIndex: 'id', search: false },
+          { title: '预约编号', dataIndex: 'id', search: false },
           { title: '图书编号', dataIndex: ['book', 'id'], key: 'bookId' },
           {
             title: '书名',
             dataIndex: ['book', 'title'],
             key: 'title',
-            render: (dom, record) => (
-              <Link to={`/books?id=${record.book.id}`}>{dom}</Link>
-            ),
+            render: (dom, record) =>
+              access.canLibraryAdminOnly ? (
+                <Link to={`/books?id=${record.book.id}`}>{dom}</Link>
+              ) : (
+                <Link to={`/library/detail/${libraryId}?activeTab=book`}>
+                  {dom}
+                </Link>
+              ),
           },
           {
-            title: 'ISBN',
-            dataIndex: ['book', 'isbn'],
-            search: false,
-          },
-          {
-            title: '借阅用户',
+            title: '预约用户',
             key: 'email',
             dataIndex: ['user', 'email'],
             render: (dom, record) =>
@@ -70,46 +69,36 @@ export const Reservations: React.FC<
               ),
           },
           {
-            title: '预订借阅日期',
-            dataIndex: 'borrowedAt',
-            valueType: 'date',
-            search: false,
-          },
-          {
-            title: '预订归还日期',
-            dataIndex: 'returnedAt',
+            title: '创建日期',
+            dataIndex: 'createdAt',
             valueType: 'date',
             search: false,
           },
           {
             title: '状态',
             dataIndex: 'status',
-            valueEnum: {
-              NOT_BORROWABLE: { text: '未到借阅日期', status: 'default' },
-              BORROWABLE: { text: '待取书', status: 'warning' },
-              CANCELED: { text: '已取消', status: 'default' },
-              FULFILLED: { text: '已取书', status: 'success' },
-              EXPIRED: { text: '未按时取书', status: 'error' },
-            },
+            valueEnum:
+              Constants.ReservationApplication
+                .ReservationApplicationStatusMapToStyle,
           },
           {
             title: '操作',
             dataIndex: 'actions',
             search: false,
             render: (dom, record) => {
-              const cantCancelled =
-                !!record.borrowingId || record.deleted === true;
-              const cantBorrow =
-                !!record.borrowingId || record.deleted === true;
+              const cantResend = record.status !== 'NOTIFIED';
+              const cantCancel =
+                record.status === 'CANCELLED' || record.status === 'FULFILLED';
+              const cantDone = record.status !== 'NOTIFIED';
               return (
                 <>
                   <Popconfirm
-                    disabled={cantCancelled}
+                    disabled={cantResend}
                     title="提示"
-                    description="确认是否取消用户的预订请求"
-                    icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                    description="是否重发通知短信"
+                    icon={<QuestionCircleOutlined />}
                     onConfirm={() => {
-                      cancelReservations({ ids: [record.id] }).then(() => {
+                      resendNotification({ id: record.id }).then(() => {
                         message.success('操作成功');
                         actionRef.current?.reload();
                       });
@@ -118,19 +107,19 @@ export const Reservations: React.FC<
                     <Button
                       style={{ padding: '0 4px 0 0' }}
                       type={'link'}
-                      disabled={cantCancelled}
+                      disabled={cantResend}
                     >
-                      取消
+                      重发通知
                     </Button>
                   </Popconfirm>
                   <Popconfirm
-                    disabled={cantBorrow}
+                    disabled={cantCancel}
                     title="提示"
-                    description="确认是否借阅图书"
-                    icon={<QuestionCircleOutlined />}
+                    description="是否取消借阅"
+                    icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                     onConfirm={() => {
-                      borrowBookFormReservations({
-                        reservationIds: [record.id],
+                      cancelReservationApplication({
+                        id: record.id,
                       }).then(() => {
                         message.success('操作成功');
                         actionRef.current?.reload();
@@ -140,9 +129,31 @@ export const Reservations: React.FC<
                     <Button
                       style={{ padding: '0 4px 0 0' }}
                       type={'link'}
-                      disabled={cantBorrow}
+                      disabled={cantCancel}
                     >
-                      借阅
+                      取消预约
+                    </Button>
+                  </Popconfirm>
+                  <Popconfirm
+                    disabled={cantDone}
+                    title="提示"
+                    description="是否为用户完成借阅"
+                    icon={<QuestionCircleOutlined />}
+                    onConfirm={() => {
+                      fulfillReservationApplication({
+                        id: record.id,
+                      }).then(() => {
+                        message.success('操作成功');
+                        actionRef.current?.reload();
+                      });
+                    }}
+                  >
+                    <Button
+                      style={{ padding: '0 4px 0 0' }}
+                      type={'link'}
+                      disabled={cantDone}
+                    >
+                      完成借阅
                     </Button>
                   </Popconfirm>
                 </>
@@ -151,15 +162,13 @@ export const Reservations: React.FC<
           },
         ]}
         request={async (params) => {
-          return getReservations(params).then((res) => ({
+          return getReservationBookApplication(params).then((res) => ({
             data: res.data.data,
             total: res.data.total,
           }));
         }}
       />
-    </PageContainer>
+    </>
   );
 });
-Reservations.displayName = '预订管理';
-
-export default Reservations;
+ReservationApplication.displayName = '预约管理';

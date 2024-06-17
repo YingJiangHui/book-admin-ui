@@ -1,5 +1,8 @@
 import { CustomAMap } from '@/components/CustomAMap';
 import BookList from '@/pages/Book/BookList';
+import { BorrowingList } from '@/pages/Borrowings/list';
+import { ReservationApplicationList } from '@/pages/ReservationApplication/list';
+import { ReservationList } from '@/pages/Reservations/list';
 import { UserList } from '@/pages/User/User';
 import { getLibrary, postUpdateLibrary } from '@/services/library';
 import { useParams, useRequest, useSearchParams } from '@@/exports';
@@ -66,6 +69,33 @@ export const LibraryDetail: React.FC<
           children: (
             <ProCard loading={libraryReq.loading}>
               <BookList libraryId={Number(libraryId)} />
+            </ProCard>
+          ),
+        },
+        {
+          tab: '借阅',
+          key: 'borrow',
+          children: (
+            <ProCard loading={libraryReq.loading}>
+              <BorrowingList libraryId={Number(libraryId)} />
+            </ProCard>
+          ),
+        },
+        {
+          tab: '预订',
+          key: 'reservation',
+          children: (
+            <ProCard loading={libraryReq.loading}>
+              <ReservationList libraryId={Number(libraryId)} />
+            </ProCard>
+          ),
+        },
+        {
+          tab: '预约',
+          key: 'reservationApplication',
+          children: (
+            <ProCard loading={libraryReq.loading}>
+              <ReservationApplicationList libraryId={Number(libraryId)} />
             </ProCard>
           ),
         },
