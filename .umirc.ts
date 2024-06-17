@@ -98,7 +98,7 @@ export default defineConfig({
     {
       path: '/reservations',
       component: './Reservations/index',
-      name: '预约管理',
+      name: '预订管理',
       access: 'canSystemAdmin',
       key: 'system-admin-reservations',
     },
@@ -113,7 +113,7 @@ export default defineConfig({
     {
       path: '/library/reservations',
       component: './Reservations/index',
-      name: '预约管理',
+      name: '预订管理',
       access: 'canLibraryAdminOnly',
       key: 'library-admin-reservations',
     },

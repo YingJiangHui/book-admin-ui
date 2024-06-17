@@ -19,7 +19,7 @@ export const Reservations: React.FC<
   const access = useAccess();
   const actionRef = useRef<ActionType>();
   return (
-    <PageContainer header={{ title: '预约管理' }}>
+    <PageContainer header={{ title: '预订管理' }}>
       <ProTable<
         API.Reservation.Instance,
         {
@@ -43,7 +43,7 @@ export const Reservations: React.FC<
         }}
         params={{ libraryId: selectedLibrary?.id }}
         columns={[
-          { title: '预约编号', dataIndex: 'id', search: false },
+          { title: '预订编号', dataIndex: 'id', search: false },
           { title: '图书编号', dataIndex: ['book', 'id'], key: 'bookId' },
           {
             title: '书名',
@@ -70,13 +70,13 @@ export const Reservations: React.FC<
               ),
           },
           {
-            title: '预约借阅日期',
+            title: '预订借阅日期',
             dataIndex: 'borrowedAt',
             valueType: 'date',
             search: false,
           },
           {
-            title: '预约归还日期',
+            title: '预订归还日期',
             dataIndex: 'returnedAt',
             valueType: 'date',
             search: false,
@@ -106,7 +106,7 @@ export const Reservations: React.FC<
                   <Popconfirm
                     disabled={cantCancelled}
                     title="提示"
-                    description="确认是否取消用户的预约请求"
+                    description="确认是否取消用户的预订请求"
                     icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                     onConfirm={() => {
                       cancelReservations({ ids: [record.id] }).then(() => {
@@ -160,6 +160,6 @@ export const Reservations: React.FC<
     </PageContainer>
   );
 });
-Reservations.displayName = '预约管理';
+Reservations.displayName = '预订管理';
 
 export default Reservations;

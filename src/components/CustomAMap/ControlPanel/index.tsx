@@ -116,7 +116,7 @@ export const ControlPanel: React.FC<
                   disabled={closed}
                   name={'disableReserve'}
                   initialValue={false}
-                  label={'关闭预约'}
+                  label={'关闭预订'}
                 />
               )}
             </ProFormDependency>
