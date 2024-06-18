@@ -28,15 +28,7 @@ export const ReservationList: React.FC<
         bordered
         form={{
           // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-          syncToUrl: (values, type) => {
-            if (type === 'get') {
-              return {
-                ...values,
-                // created_at: [values.startTime, values.endTime],
-              };
-            }
-            return values;
-          },
+          syncToUrl: false,
         }}
         params={{ libraryId: libraryId }}
         columns={[
@@ -76,7 +68,7 @@ export const ReservationList: React.FC<
             valueEnum: {
               NOT_BORROWABLE: { text: '未到借阅日期', status: 'default' },
               BORROWABLE: { text: '待取书', status: 'warning' },
-              CANCELED: { text: '已取消', status: 'default' },
+              CANCELLED: { text: '已取消', status: 'default' },
               FULFILLED: { text: '已取书', status: 'success' },
               EXPIRED: { text: '未按时取书', status: 'error' },
             },

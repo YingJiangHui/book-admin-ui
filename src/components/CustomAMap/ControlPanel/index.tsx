@@ -20,6 +20,7 @@ export type AMapControlValueType = {
   address: string;
   disableReserve: boolean;
   disableBorrow: boolean;
+  disableReserveApplication: boolean;
   closed: boolean;
 };
 
@@ -36,10 +37,12 @@ export const ControlPanel: React.FC<
         {...rest}
         onValuesChange={(changedValues, values) => {
           onValuesChange?.(changedValues, values);
-          if (changedValues.closed) {
+
+          if (typeof changedValues.closed === 'boolean') {
             form?.setFieldsValue({
-              disableBorrow: true,
-              disableReserve: true,
+              disableBorrow: changedValues.closed,
+              disableReserve: changedValues.closed,
+              disableReserveApplication: changedValues.closed,
             });
           }
         }}
@@ -126,6 +129,18 @@ export const ControlPanel: React.FC<
               {({ closed }) => (
                 <ProFormSwitch
                   disabled={closed}
+                  name={'disableReserveApplication'}
+                  initialValue={false}
+                  label={'关闭预约'}
+                />
+              )}
+            </ProFormDependency>
+          </Col>
+          <Col>
+            <ProFormDependency name={['closed']}>
+              {({ closed }) => (
+                <ProFormSwitch
+                  disabled={closed}
                   name={'disableBorrow'}
                   initialValue={false}
                   label={'关闭借阅'}
@@ -133,6 +148,8 @@ export const ControlPanel: React.FC<
               )}
             </ProFormDependency>
           </Col>
+        </Row>
+        <Row>
           <Col>
             <ProFormSwitch
               name={'closed'}

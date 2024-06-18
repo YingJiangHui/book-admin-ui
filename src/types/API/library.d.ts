@@ -18,6 +18,8 @@ namespace API {
       disableBorrow: boolean;
 
       disableReserve: boolean;
+
+      disableReserveApplication: boolean;
     };
   }
 }

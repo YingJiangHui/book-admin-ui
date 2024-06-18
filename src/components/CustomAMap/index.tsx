@@ -135,6 +135,7 @@ export const CustomAMap: React.FC<React.PropsWithChildren<CustomAMapProps>> =
                 address: values.address,
                 disableBorrow: values.disableBorrow,
                 disableReserve: values.disableReserve,
+                disableReserveApplication: values.disableReserveApplication,
                 closed: values.closed,
               });
             }}
