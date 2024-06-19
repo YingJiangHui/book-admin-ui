@@ -8,11 +8,13 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import { Button, message, theme } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default () => {
   const [URLSearchParams] = useSearchParams();
-
+  useEffect(() => {
+    window.document.title = '注册';
+  }, []);
   const { token } = theme.useToken();
 
   const [onFinish, loading] = useLoading(async (values: RegisterReq) => {

@@ -20,6 +20,7 @@ export default defineConfig({
       charset: 'utf-8',
     },
   ],
+  links: [{ rel: 'icon', href: '/book.svg' }],
   scripts: [
     'https://webapi.amap.com/maps?v=2.0&key=afbb14d219ab8177546eae44a24daa91&plugin=AMap.Geocoder',
     'https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js',
@@ -76,15 +77,22 @@ export default defineConfig({
       name: '创建图书馆',
       access: 'canSystemAdmin',
     },
-    { path: '/register', component: './Auth/Register', layout: false },
+    {
+      path: '/register',
+      component: './Auth/Register',
+      name: '注册',
+      layout: false,
+    },
     {
       path: '/forget-password',
       component: './Auth/ForgetPassword',
+      name: '忘记密码',
       layout: false,
     },
     {
       path: '/login',
       component: './Auth/Login',
+      name: '登录',
       layout: false,
     },
     {

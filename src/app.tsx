@@ -8,12 +8,7 @@ import { getUserInfo } from '@/services/user';
 import { toLogin } from '@/utils/helpers';
 import { storage } from '@/utils/store';
 import { useAccess, useModel } from '@@/exports';
-import {
-  BookTwoTone,
-  DownOutlined,
-  LogoutOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { DownOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { ProLayoutProps } from '@ant-design/pro-components';
 import { RequestConfig } from '@umijs/max';
 import { Dropdown, MenuProps, Space, Tag, message } from 'antd';
@@ -157,7 +152,7 @@ export const layout = (props: {
     },
     rightContentRender: false,
     title: title as any,
-    logo: <BookTwoTone />,
+    logo: <img src={'/book.svg'} />,
     menu: {
       locale: false,
     },

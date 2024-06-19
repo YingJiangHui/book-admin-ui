@@ -3,7 +3,7 @@ import { LoginReq, postLogin } from '@/services/auth';
 import { waitTimePromise } from '@/utils/helpers';
 import { storage } from '@/utils/store';
 import { useNavigate, useSearchParams } from '@@/exports';
-import { BookTwoTone, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import {
   LoginForm,
   ProConfigProvider,
@@ -12,12 +12,15 @@ import {
 } from '@ant-design/pro-components';
 import { Link, useModel } from '@umijs/max';
 import { message, theme } from 'antd';
-import { CSSProperties } from 'react';
+import { CSSProperties, useEffect } from 'react';
 
 type LoginType = 'phone' | 'account';
 
-export default () => {
+const Login: React.FC = () => {
   const { token } = theme.useToken();
+  useEffect(() => {
+    window.document.title = '登录';
+  }, []);
   const [searchParams] = useSearchParams();
   const initialState = useModel('@@initialState');
   const iconStyles: CSSProperties = {
@@ -47,7 +50,8 @@ export default () => {
         <LoginForm
           onFinish={onFinish}
           logo={
-            <BookTwoTone style={{ fontSize: 44, lineHeight: 44 }} size={36} />
+            <img src={'/book.svg'} />
+            // <BookTwoTone style={{ fontSize: 44, lineHeight: 44 }} size={36} />
           }
           title="图书管理系统登录"
           subTitle="图书馆管理后台"
@@ -128,3 +132,6 @@ export default () => {
     </ProConfigProvider>
   );
 };
+
+Login.displayName = '登录';
+export default Login;

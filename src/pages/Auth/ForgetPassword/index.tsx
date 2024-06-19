@@ -10,11 +10,13 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import { Button, Form, message, theme } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default () => {
   const { token } = theme.useToken();
-
+  useEffect(() => {
+    window.document.title = '忘记密码';
+  }, []);
   const [form] = Form.useForm<any>();
 
   const onSendValidCode = async () => {
