@@ -46,17 +46,17 @@ export default defineConfig({
     //   ],
     // },
     {
-      path: '/system-admin/statistics',
+      path: '/statistics',
       component: './Statistics/SystemAdmin',
       name: '数据统计',
-      access: 'canSystemAdmin',
+      access: 'canAuth',
     },
-    {
-      name: '数据统计',
-      path: '/library-admin/statistics',
-      component: './Statistics/SystemAdmin',
-      access: 'canLibraryAdminOnly',
-    },
+    // {
+    //   name: '数据统计',
+    //   path: '/library-admin/statistics',
+    //   component: './Statistics/SystemAdmin',
+    //   access: 'canLibraryAdminOnly',
+    // },
     {
       path: '/library',
       component: './Library/List',
@@ -95,28 +95,7 @@ export default defineConfig({
       name: '登录',
       layout: false,
     },
-    {
-      path: '/library/borrowings',
-      component: './Borrowings/index',
-      breadcrumbName: '借阅管理',
-      name: '借阅管理',
-      access: 'canLibraryAdminOnly',
-      key: 'library-admin-borrowings',
-    },
-    {
-      path: '/library/reservations',
-      component: './Reservations/index',
-      name: '预订管理',
-      access: 'canLibraryAdminOnly',
-      key: 'library-admin-reservations',
-    },
-    {
-      path: '/library/reservations',
-      component: './ReservationApplication/index',
-      name: '预约管理',
-      access: 'canLibraryAdminOnly',
-      key: 'library-admin-reservations',
-    },
+
     {
       name: '图书馆设置',
       path: '/location',
@@ -144,6 +123,28 @@ export default defineConfig({
       key: 'system-admin-category',
     },
     {
+      path: '/library/borrowings',
+      component: './Borrowings/index',
+      breadcrumbName: '借阅管理',
+      name: '借阅管理',
+      access: 'canLibraryAdminOnly',
+      key: 'library-admin-borrowings',
+    },
+    {
+      path: '/library/reservations',
+      component: './Reservations/index',
+      name: '预订管理',
+      access: 'canLibraryAdminOnly',
+      key: 'library-admin-reservations',
+    },
+    {
+      path: '/library/reservation-application',
+      component: './ReservationApplication/index',
+      name: '预约管理',
+      access: 'canLibraryAdminOnly',
+      key: 'library-admin-reservation-applicaiton',
+    },
+    {
       path: '/users',
       component: './User/List',
       name: '用户管理',
@@ -163,8 +164,21 @@ export default defineConfig({
     },
     {
       path: '/',
-      redirect: '/system-admin/statistics',
+      redirect: '/statistics',
+      access: 'canAuth',
+      // key: 'system-admin-statistics',
     },
+    // {
+    //   path: '/',
+    //   redirect: '/library-admin/statistics',
+    //   access: 'canLibraryAdminOnly',
+    //   key: 'system-library-statistics',
+    // },
+    // {
+    //   path: '/',
+    //   redirect: '/system-admin/statistics',
+    //   access: 'canSystemAdmin',
+    // },
     // {
     //   name: '首页',
     //   path: '/home',

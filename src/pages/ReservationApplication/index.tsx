@@ -172,3 +172,5 @@ export const ReservationApplication: React.FC<
   );
 });
 ReservationApplication.displayName = '预约管理';
+
+export default ReservationApplication;

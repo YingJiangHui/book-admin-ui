@@ -2,7 +2,7 @@ import { Constants } from '@/constants';
 import { hotBorrowedBooks } from '@/services/statistics';
 import { getRangeDateOnUnitOfTime } from '@/utils/date';
 import { getRandomIndex } from '@/utils/randomIndex';
-import { useRequest } from '@@/exports';
+import { useAccess, useModel, useRequest } from '@@/exports';
 import { Dayjs } from 'dayjs';
 import React, { memo, useRef } from 'react';
 
@@ -16,18 +16,20 @@ export const HotBorrowings: React.FC<
   const { dateRange } = props;
 
   const ref = useRef<HTMLDivElement>();
+  const access = useAccess();
 
+  const { selectedLibrary } = useModel('currentLibrary');
   useRequest(
     () =>
-      hotBorrowedBooks(
-        getRangeDateOnUnitOfTime({
+      hotBorrowedBooks({
+        ...(getRangeDateOnUnitOfTime({
           startTime: dateRange?.[0],
           endTime: dateRange?.[1],
-        }) as any,
-      ),
+        }) as any),
+        libraryId: access.canLibraryAdminOnly ? selectedLibrary?.id : undefined,
+      }),
     {
-      refreshDeps: [dateRange],
-
+      refreshDeps: [dateRange, selectedLibrary?.id, access.canLibraryAdminOnly],
       onSuccess: (res) => {
         let myChart = window.echarts.init(ref.current!);
         console.log(res, 'res');

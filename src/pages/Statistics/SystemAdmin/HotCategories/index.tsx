@@ -1,6 +1,6 @@
 import { hotBorrowedCategories } from '@/services/statistics';
 import { getRangeDateOnUnitOfTime } from '@/utils/date';
-import { useRequest } from '@@/exports';
+import { useAccess, useModel, useRequest } from '@@/exports';
 import { Dayjs } from 'dayjs';
 import React, { memo, useRef } from 'react';
 
@@ -13,16 +13,20 @@ export const HotCategories: React.FC<
 > = memo((props) => {
   const ref = useRef<HTMLDivElement>();
   const { dateRange } = props;
+  const access = useAccess();
 
+  const { selectedLibrary } = useModel('currentLibrary');
   useRequest(
     () =>
-      hotBorrowedCategories(
-        getRangeDateOnUnitOfTime({
+      hotBorrowedCategories({
+        ...(getRangeDateOnUnitOfTime({
           startTime: dateRange?.[0],
           endTime: dateRange?.[1],
-        }) as any,
-      ),
+        }) as any),
+        libraryId: access.canLibraryAdminOnly ? selectedLibrary?.id : undefined,
+      }),
     {
+      refreshDeps: [dateRange, selectedLibrary?.id, access.canLibraryAdminOnly],
       onSuccess: (res) => {
         let myChart = window.echarts.init(ref.current!);
 

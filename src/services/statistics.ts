@@ -3,12 +3,14 @@ import { request } from '@@/exports';
 interface StatisticsQuery {
   startTime: string;
   endTime: string;
+  dateTrunc: string;
 }
 
 interface HotRankStatisticsData {
   id: number;
   name: string;
   count: number;
+  dateRange: string;
 }
 
 export const hotBorrowedBooks = (params: StatisticsQuery) => {

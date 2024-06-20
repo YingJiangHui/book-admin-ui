@@ -60,7 +60,7 @@ export const layout = (props: {
       key: item.id.toString(),
       label: item.name,
       onClick: () => setSelectedLibrary(item),
-      disabled: item.closed,
+      // disabled: item.closed,
     }));
   console.log(props, 'props');
   const title = useMemo(() => {
