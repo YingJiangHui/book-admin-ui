@@ -12,6 +12,7 @@ import {
   ProFormDependency,
   ProFormSelect,
   ProFormSwitch,
+  ProFormText,
   ProTable,
 } from '@ant-design/pro-components';
 import { Button, Space, Tag, message } from 'antd';
@@ -136,6 +137,12 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
                       </Button>
                     }
                   >
+                    <ProFormText
+                      initialValue={record.email}
+                      disabled
+                      label={'用户'}
+                      name={'email'}
+                    />
                     <ProFormSelect
                       mode={'multiple'}
                       label={'角色'}
@@ -234,7 +241,7 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
               onFinish={async (values) => {
                 await sendInviteCode({
                   email: values.email,
-                  libraryIds: [values.libraryId],
+                  libraryIds: values.libraryId,
                   roles: [values.role],
                 });
                 // actionRef.current?.reload();
@@ -242,7 +249,7 @@ export const UserList: React.FC<React.PropsWithChildren<UserListProps>> = memo(
                 return Promise.resolve(true);
               }}
               initialValues={{
-                libraryId: props.libraryId,
+                libraryId: props.libraryId ? [props.libraryId] : [],
                 role: 'LIBRARY_ADMIN',
               }}
               title={'邀请成为图书管理员'}

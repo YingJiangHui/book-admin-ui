@@ -30,7 +30,8 @@ export const InviteRegister: React.FC<
       />
       {/*图书馆选择*/}
       <ProFormSelect
-        disabled
+        // disabled={}
+        mode={'multiple'}
         label={'图书馆'}
         name="libraryId"
         fieldProps={{

@@ -45,7 +45,7 @@ export const ReservationList: React.FC<
             search: false,
           },
           {
-            title: '借阅用户',
+            title: '预订用户',
             key: 'email',
             dataIndex: ['user', 'email'],
             render: (dom, record) => dom,

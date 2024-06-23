@@ -108,18 +108,18 @@ export default defineConfig({
       component: './Book/index',
       access: 'canLibraryAdminOnly',
     },
-    {
-      name: '图书分类',
-      path: '/library/category',
-      component: './Category/List',
-      access: 'canSystemAdmin',
-      key: 'system-admin-category',
-    },
+    // {
+    //   name: '图书分类',
+    //   path: '/library/category',
+    //   component: './Category/List',
+    //   access: 'canSystemAdmin',
+    //   key: 'system-admin-category',
+    // },
     {
       name: '图书分类',
       path: '/category',
       component: './Category/List',
-      access: 'canLibraryAdminOnly',
+      access: 'canAuth',
       key: 'system-admin-category',
     },
     {

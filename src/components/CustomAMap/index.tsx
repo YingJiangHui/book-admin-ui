@@ -76,6 +76,9 @@ export const CustomAMap: React.FC<React.PropsWithChildren<CustomAMapProps>> =
       } else {
         console.error('AMap not loaded');
       }
+      return () => {
+        return MapRef.current.destroy();
+      };
     }, []);
     useEffect(() => {
       if (
