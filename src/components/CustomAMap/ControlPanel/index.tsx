@@ -67,7 +67,7 @@ export const ControlPanel: React.FC<
           ...initialValues,
           coords:
             initialValues?.longitude && initialValues?.longitude
-              ? `${initialValues?.longitude},${initialValues?.latitude}`
+              ? `${initialValues?.latitude},${initialValues?.longitude}`
               : undefined,
         }}
         form={form}
@@ -83,7 +83,7 @@ export const ControlPanel: React.FC<
             return searchPoi(values.keyWords).then((poiList) =>
               poiList.pois.map((item) => ({
                 label: item.name,
-                value: `${item.location.lng},${item.location.lat}`,
+                value: `${item.location.lat},${item.location.lng}`,
               })),
             );
           }}

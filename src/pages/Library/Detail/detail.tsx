@@ -39,7 +39,7 @@ export const LibraryDetail: React.FC<
             {libraryReq?.data?.address}
           </Descriptions.Item>
           <Descriptions.Item label="经纬度">
-            {libraryReq?.data?.longitude},{libraryReq.data?.latitude}
+            {libraryReq.data?.latitude},{libraryReq?.data?.longitude}
           </Descriptions.Item>
           <Descriptions.Item label="范围(半径)">
             {libraryReq.data?.circumference}m

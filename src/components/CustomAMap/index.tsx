@@ -127,7 +127,7 @@ export const CustomAMap: React.FC<React.PropsWithChildren<CustomAMapProps>> =
           <ControlPanel
             initialValues={initialValues}
             onFinish={async (values) => {
-              const [longitude, latitude] = values.coords
+              const [latitude, longitude] = values.coords
                 ?.split(',')
                 .map(Number);
               return onFinish?.({
