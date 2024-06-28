@@ -34,7 +34,7 @@ export default () => {
             dataIndex: 'coords',
             title: '坐标',
             width: '10rem',
-            render: (_, record) => `${record.longitude},${record.latitude}`,
+            render: (_, record) => `${record.latitude},${record.longitude}`,
             search: false,
           },
           {
@@ -137,7 +137,7 @@ export default () => {
           },
         }}
         pagination={{
-          pageSize: 5,
+          pageSize: 10,
           onChange: (page) => console.log(page),
         }}
         dateFormatter="string"

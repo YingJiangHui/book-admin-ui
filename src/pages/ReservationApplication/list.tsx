@@ -51,7 +51,7 @@ export const ReservationApplicationList: React.FC<
           {
             title: '创建日期',
             dataIndex: 'createdAt',
-            valueType: 'date',
+            valueType: 'dateTime',
             search: false,
           },
           {

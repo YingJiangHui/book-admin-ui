@@ -48,7 +48,7 @@ export const HotBorrowings: React.FC<
           (item) => ({
             value: item.count,
             name: item.name,
-            symbolSize: Math.min(Math.max(35, item.count * 5), 150),
+            symbolSize: Math.min(Math.max(35, item.count * 10), 150),
             itemStyle: {
               color:
                 Constants.Common.Colors[

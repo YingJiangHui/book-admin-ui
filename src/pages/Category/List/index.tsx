@@ -41,7 +41,7 @@ export const CategoryListPage: React.FC<
           {
             dataIndex: 'createdAt',
             title: '创建日期',
-            valueType: 'date',
+            valueType: 'dateTime',
             search: false,
           },
           {
