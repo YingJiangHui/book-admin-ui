@@ -182,7 +182,7 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
                     modalProps={{ maskClosable: false, destroyOnClose: true }}
                     key={'book-form-edit'}
                     onFinish={async (values) => {
-                      console.log(values, 'value');
+                      console.log(JSON.stringify(values), 'value');
                       const { file } = values;
                       await updateBook({
                         ...values,
