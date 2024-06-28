@@ -48,14 +48,6 @@ export const ReservationApplication: React.FC<
             title: '书名',
             dataIndex: ['book', 'title'],
             key: 'title',
-            render: (dom, record) =>
-              access.canLibraryAdminOnly ? (
-                <Link to={`/books?id=${record.book.id}`}>{dom}</Link>
-              ) : (
-                <Link to={`/library/detail/${libraryId}?activeTab=book`}>
-                  {dom}
-                </Link>
-              ),
           },
           {
             title: '预约用户',

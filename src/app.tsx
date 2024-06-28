@@ -138,8 +138,14 @@ export const layout = (props: {
     title: title as any,
     logo: <img src={'/book.svg'} width={20} />,
     menuHeaderRender: (logo, title) => {
-      console.log(title, 'title');
-      return (
+      return access.canSystemAdmin ? (
+        <Space align={'baseline'}>
+          {logo}
+          <h1 style={{ fontSize: 16, fontWeight: 'bold' }}>
+            {props.initialState.name}
+          </h1>
+        </Space>
+      ) : (
         <div style={{ padding: -16 }} onClick={(e) => e.stopPropagation()}>
           <Dropdown
             trigger={['click']}
@@ -153,8 +159,8 @@ export const layout = (props: {
               {/*{selectedLibrary?.name || '无可用图书馆'}*/}
               {logo}
               <h1 style={{ fontSize: 16, fontWeight: 'bold' }}>
-                {title?.props?.children}
-              </h1>{' '}
+                {selectedLibrary?.name}
+              </h1>
               <DownOutlined />
             </Space>
           </Dropdown>
