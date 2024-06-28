@@ -23,9 +23,12 @@ export const getLibraries = (
     },
   );
 
-export const getLibrariesAll = () =>
+export const getLibrariesAll = (params?: {
+  startTime: string;
+  endTime: string;
+}) =>
   request<API.Common.Result<API.Library.Instance[]>>('/api/library/all', {
-    // data: params,
+    params: params,
     method: 'GET',
   });
 

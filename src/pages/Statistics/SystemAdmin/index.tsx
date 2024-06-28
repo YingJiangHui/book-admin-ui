@@ -76,7 +76,7 @@ export const SystemAdminStatistics: React.FC<
           >
             <ProCard split="vertical" style={{ height: '100%' }}>
               <ProCard title="地理位置" colSpan={10} style={{ height: '100%' }}>
-                <LibrariesMap />
+                <LibrariesMap dateRange={dateRange} />
               </ProCard>
               <ProCard
                 title="图书馆借阅量"
