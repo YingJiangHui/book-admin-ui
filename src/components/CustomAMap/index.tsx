@@ -64,7 +64,7 @@ export const CustomAMap: React.FC<React.PropsWithChildren<CustomAMapProps>> =
           MapRef.current?.setCenter(markerInstance.getPosition()!);
           MapRef.current?.setZoom(18);
           form.setFieldsValue({
-            coords: `${lnglat.lng},${lnglat.lat}`,
+            coords: `${lnglat.lat},${lnglat.lng}`,
           });
 
           getAddressByLngLat(lnglat).then((res) => {
@@ -77,7 +77,7 @@ export const CustomAMap: React.FC<React.PropsWithChildren<CustomAMapProps>> =
         console.error('AMap not loaded');
       }
       return () => {
-        return MapRef.current.destroy();
+        return MapRef.current?.destroy();
       };
     }, []);
     useEffect(() => {
@@ -150,9 +150,8 @@ export const CustomAMap: React.FC<React.PropsWithChildren<CustomAMapProps>> =
                   changedValue?.coords?.indexOf(',') !== -1)
               ) {
                 const coords = changedValue.searchCoords || values?.coords;
-                const center = new AMap.LngLat(
-                  ...(coords.split(',').map(Number) as [number, number]),
-                );
+                const [lat, lng] = coords?.split(',');
+                const center = new AMap.LngLat(lng, lat);
                 setPoint(
                   MapRef.current!,
                   circleInstance,

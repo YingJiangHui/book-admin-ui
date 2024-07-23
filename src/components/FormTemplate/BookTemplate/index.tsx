@@ -2,14 +2,16 @@ import { getAllCategories } from '@/services/categroy';
 import { getLibrariesAll } from '@/services/library';
 import {
   CaptFieldRef,
+  ModalForm,
   ProForm,
   ProFormCheckbox,
+  ProFormDependency,
   ProFormSelect,
   ProFormText,
   ProFormTextArea,
   ProFormUploadButton,
 } from '@ant-design/pro-components';
-import { Col, Row } from 'antd';
+import { Button, Col, Row } from 'antd';
 import React, { memo, useRef } from 'react';
 import useForm = ProForm.useForm;
 
@@ -22,6 +24,30 @@ export const BookFormTemplate: React.FC<
   const selectCategoryRef = useRef<CaptFieldRef>();
   return (
     <>
+      <ProFormDependency name={[]}>
+        {(_, form) => (
+          <ModalForm
+            title={'快速填写'}
+            onFinish={async (values) => {
+              if (values.fastInput) {
+                form.setFieldsValue(JSON.parse(values.fastInput));
+              }
+              return Promise.resolve(true);
+            }}
+            trigger={
+              <Button type={'link'} style={{ padding: 0 }}>
+                快速填写（演示）
+              </Button>
+            }
+          >
+            <ProFormTextArea
+              fieldProps={{ rows: 10 }}
+              required
+              name={'fastInput'}
+            />
+          </ModalForm>
+        )}
+      </ProFormDependency>
       <ProFormSelect
         rules={[{ required: true }]}
         disabled

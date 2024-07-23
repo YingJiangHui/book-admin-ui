@@ -47,9 +47,6 @@ export const Borrowings: React.FC<React.PropsWithChildren<BorrowingsProps>> =
               title: '书名',
               dataIndex: ['book', 'title'],
               key: 'title',
-              render: (dom, record) => (
-                <Link to={`/books?id=${record.book.id}`}>{dom}</Link>
-              ),
             },
             {
               title: 'ISBN',

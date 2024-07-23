@@ -3,7 +3,7 @@ import { getRangeDateOnUnitOfTime } from '@/utils/date';
 import { useModel, useRequest } from '@@/exports';
 import { useAccess } from '@umijs/max';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { memo, useRef } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 
 type props = {
   dateRange?: [Dayjs, Dayjs];
@@ -18,7 +18,13 @@ export const HotLibraries: React.FC<
   const access = useAccess();
 
   const { selectedLibrary } = useModel('currentLibrary');
-
+  const chartRef = useRef<echarts.ECharts>();
+  useEffect(() => {
+    chartRef.current = window.echarts.init(ref.current!);
+    return () => {
+      chartRef.current?.dispose();
+    };
+  }, [dateRange, dateTrunc]);
   useRequest(
     () =>
       hotBorrowedLibraries({
@@ -62,7 +68,6 @@ export const HotLibraries: React.FC<
           acc[name][date] = count;
           return acc;
         }, {} as Record<string, Record<string, number>>);
-        console.log(librariesData, 'librariesData');
         // Step 3: 构建series数据
         const seriesData = Object.entries(librariesData).map(
           ([name, dateCounts]) => {
@@ -74,7 +79,8 @@ export const HotLibraries: React.FC<
             };
           },
         );
-        let myChart = window.echarts.init(ref.current!);
+        console.log(librariesData, dates, seriesData, 'librariesData');
+        // let myChart = window.echarts.init(ref.current!);
         const option = {
           legend: {
             data: Object.keys(librariesData),
@@ -133,7 +139,7 @@ export const HotLibraries: React.FC<
           series: seriesData,
         };
         // 使用刚指定的配置项和数据显示图表
-        myChart.setOption(option);
+        chartRef.current.setOption(option);
       },
     },
   );

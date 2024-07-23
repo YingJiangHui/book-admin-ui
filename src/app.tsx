@@ -16,6 +16,7 @@ import { AxiosError } from 'axios';
 import React, { useMemo } from 'react';
 
 const defaultInitialState: System.InitialState = { name: '图书管理系统' };
+
 export async function getInitialState(): Promise<System.InitialState> {
   const token = storage.get('token');
   if (!token) {
@@ -62,30 +63,13 @@ export const layout = (props: {
       onClick: () => setSelectedLibrary(item),
       // disabled: item.closed,
     }));
-  console.log(props, 'props');
   const title = useMemo(() => {
     if (access.canSystemAdmin) {
       return props.initialState.name;
     }
 
     if (access.canLibraryAdmin) {
-      return (
-        <div style={{ padding: -16 }} onClick={(e) => e.stopPropagation()}>
-          <Dropdown
-            trigger={['click']}
-            menu={{
-              items,
-              selectable: true,
-              activeKey: selectedLibrary?.id.toString(),
-            }}
-          >
-            <Space align={'baseline'}>
-              {selectedLibrary?.name || '无可用图书馆'}
-              <DownOutlined />
-            </Space>
-          </Dropdown>
-        </div>
-      );
+      return selectedLibrary?.name;
     }
 
     return props.initialState.name;
@@ -152,7 +136,37 @@ export const layout = (props: {
     },
     rightContentRender: false,
     title: title as any,
-    logo: <img src={'/book.svg'} />,
+    logo: <img src={'/book.svg'} width={20} />,
+    menuHeaderRender: (logo, title) => {
+      return access.canSystemAdmin ? (
+        <Space align={'baseline'}>
+          {logo}
+          <h1 style={{ fontSize: 16, fontWeight: 'bold' }}>
+            {props.initialState.name}
+          </h1>
+        </Space>
+      ) : (
+        <div style={{ padding: -16 }} onClick={(e) => e.stopPropagation()}>
+          <Dropdown
+            trigger={['click']}
+            menu={{
+              items,
+              selectable: true,
+              activeKey: selectedLibrary?.id.toString(),
+            }}
+          >
+            <Space align={'baseline'}>
+              {/*{selectedLibrary?.name || '无可用图书馆'}*/}
+              {logo}
+              <h1 style={{ fontSize: 16, fontWeight: 'bold' }}>
+                {selectedLibrary?.name}
+              </h1>
+              <DownOutlined />
+            </Space>
+          </Dropdown>
+        </div>
+      );
+    },
     menu: {
       locale: false,
     },

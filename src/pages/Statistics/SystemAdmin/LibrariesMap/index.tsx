@@ -1,12 +1,14 @@
 import { getLibrariesAll } from '@/services/library';
+import { getRangeDateOnUnitOfTime } from '@/utils/date';
 import { useAccess, useModel, useRequest } from '@@/exports';
 import { EChartOption, EChartsResponsiveOption } from 'echarts';
 import React, { memo, useRef } from 'react';
-type props = {};
+type props = { dateRange: [string, string] };
 export type LibrariesMapProps = props;
 export const LibrariesMap: React.FC<
   React.PropsWithChildren<LibrariesMapProps>
 > = memo((props) => {
+  const { dateRange } = props;
   const ref = useRef<HTMLDivElement>();
 
   const access = useAccess();
@@ -16,9 +18,14 @@ export const LibrariesMap: React.FC<
     () =>
       access.canLibraryAdminOnly
         ? Promise.resolve({ data: selectedLibrary ? [selectedLibrary] : [] })
-        : getLibrariesAll(),
+        : getLibrariesAll({
+            ...(getRangeDateOnUnitOfTime({
+              startTime: dateRange?.[0],
+              endTime: dateRange?.[1],
+            }) as any),
+          }),
     {
-      refreshDeps: [access.canLibraryAdminOnly, selectedLibrary],
+      refreshDeps: [access.canLibraryAdminOnly, selectedLibrary, dateRange],
       onSuccess: (res) => {
         let myChart = window.echarts.init(ref.current!);
 

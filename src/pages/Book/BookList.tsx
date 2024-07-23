@@ -8,7 +8,6 @@ import {
   updateBook,
 } from '@/services/book';
 import { getBooksInLibrary } from '@/services/library';
-import { Link } from '@@/exports';
 import {
   CheckOutlined,
   PlusOutlined,
@@ -61,9 +60,6 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
             width: '10rem',
             order: 5,
             ellipsis: true,
-            render: (dom, record) => {
-              return <Link to={`/library/detail/${record.id}`}>{dom}</Link>;
-            },
           },
           {
             dataIndex: 'isbn',
@@ -182,7 +178,7 @@ export const BookList: React.FC<React.PropsWithChildren<BookListProps>> = memo(
                     modalProps={{ maskClosable: false, destroyOnClose: true }}
                     key={'book-form-edit'}
                     onFinish={async (values) => {
-                      console.log(values, 'value');
+                      console.log(JSON.stringify(values), 'value');
                       const { file } = values;
                       await updateBook({
                         ...values,
