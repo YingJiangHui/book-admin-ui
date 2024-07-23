@@ -160,7 +160,7 @@ export const layout = (props: {
 };
 
 export const request: RequestConfig = {
-  timeout: 2000,
+  timeout: 6000,
   // other axios options you want
   errorConfig: {
     errorHandler(error: AxiosError, opts) {
