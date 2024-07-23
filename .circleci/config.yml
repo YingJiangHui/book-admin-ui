@@ -9,11 +9,22 @@ jobs:
     executor: node/default
     steps:
       - checkout
-      - node/install-packages:
-          cache-path: ~/project/node_modules
-          override-ci-command: npm install
+      - restore_cache:
+          keys:
+            - v1-pnpm-cache-{{ checksum "pnpm-lock.yaml" }}
+            - v1-pnpm-cache-
       - run:
-          command: npm run build
+          name: Install pnpm
+          command: npm install -g pnpm
+      - run:
+          name: Install dependencies
+          command: pnpm install
+      - save_cache:
+          paths:
+            - ~/.pnpm-store
+          key: v1-pnpm-cache-{{ checksum "pnpm-lock.yaml" }}
+      - run:
+          command: pnpm run build
       - run:
           name: Create the ~/artifacts directory if it doesn't exist
           command: mkdir -p ~/artifacts
@@ -21,22 +32,43 @@ jobs:
       - run:
           name: Copy artifacts
           command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
-      - store_artifacts:
-          path: ~/artifacts
-          destination: node-build
+      - persist_to_workspace:
+          root: ~/artifacts
+          paths:
+            - .
+  build-docker-image:
+    executor: node/default
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/workspace
+      - setup_remote_docker:
+          version: 20.10.7
+          docker_layer_caching: true
+      - run:
+          name: Docker Login
+          command: |
+            echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+      - run:
+          name: Build Docker Image
+          command: |
+            docker build -t $CI_REGISTRY/makabaka/book-admin-ui:latest ~/workspace
   deploy:
     # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
+    executor: node/default
     steps:
       # Replace this with steps to deploy to users
       - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
+          name: login server
+          command: ssh root@$HOST_NAME
+
 workflows:
-  build:
+  build_and_deploy:
     jobs:
       - build-node
-    # - deploy:
-    #     requires:
-    #       - build-node
+      - build-docker-image:
+          requires:
+            - build-node
+      - deploy:
+          requires:
+            - build-docker-image
