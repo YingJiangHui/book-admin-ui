@@ -7,7 +7,7 @@ orbs:
 executors:
   custom-executor:
     docker:
-      - image: $CI_REGISTRY/makabaka/node-18
+      - image: $CI_REGISTRY/makabaka/front-end-build-env:node-18
         auth:
           username: $CI_REGISTRY_USER
           password: $CI_REGISTRY_PASSWORD  # context / project UI env-var reference
@@ -25,9 +25,6 @@ jobs:
           keys:
             - v1-pnpm-cache-{{ checksum "pnpm-lock.yaml" }}
             - v1-pnpm-cache-
-      - run:
-          name: Install pnpm
-          command: npm install pnpm
       - run:
           name: Install dependencies
           command: pnpm install
