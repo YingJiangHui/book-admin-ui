@@ -18,9 +18,6 @@ jobs:
     executor: custom-executor
     steps:
       - checkout
-      - run:
-          name: A
-          command: ls
       - restore_cache:
           keys:
             - v1-pnpm-cache-{{ checksum "pnpm-lock.yaml" }}
