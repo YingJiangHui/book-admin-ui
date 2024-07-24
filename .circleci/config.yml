@@ -3,10 +3,19 @@
 version: 2.1
 orbs:
   node: circleci/node@5
+
+executors:
+  custom-executor:
+    docker:
+      - image: $CI_REGISTRY/makabaka/node-18
+        auth:
+          username: $CI_REGISTRY_USER
+          password: $CI_REGISTRY_PASSWORD  # context / project UI env-var reference
+
 jobs:
   build-node:
     # Build node project
-    executor: node/default
+    executor: custom-executor
     steps:
       - checkout
       - run:
@@ -40,7 +49,7 @@ jobs:
           paths:
             - .
   build-docker-image:
-    executor: node/default
+    executor: custom-executor
     steps:
       - checkout
       - attach_workspace:
@@ -58,7 +67,7 @@ jobs:
             docker build -t $CI_REGISTRY/makabaka/book-admin-ui:latest ~/workspace
   deploy:
     # This is an example deploy job, not actually used by the workflow
-    executor: node/default
+    executor: custom-executor
     steps:
       # Replace this with steps to deploy to users
       - run:
