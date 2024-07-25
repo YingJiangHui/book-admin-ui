@@ -79,8 +79,8 @@ jobs:
       # Replace this with steps to deploy to users
       - run:
           name: login server
-          command: | 
-            ssh book@$HOST_NAME
+          command: |
+            echo yes | ssh book@$HOST_NAME
             cd server
             ls
             exit
