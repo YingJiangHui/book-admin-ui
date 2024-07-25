@@ -79,7 +79,9 @@ jobs:
       # Replace this with steps to deploy to users
       - run:
           name: login server
-          command: ssh root@$HOST_NAME
+          command: | 
+            ssh book@$HOST_NAME
+            cd server
 
 workflows:
   build_and_deploy:
