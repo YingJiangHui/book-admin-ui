@@ -57,12 +57,6 @@ jobs:
       - attach_workspace:
           at: ~/workspace
       - run:
-          name: A
-          command: ls ~/.ssh
-      - run:
-          name: B
-          command: ls ~/workspace
-      - run:
           name: Docker version
           command: docker -v
       - run:
@@ -73,6 +67,7 @@ jobs:
           name: Build Docker Image
           command: |
             cd ~/workspace && docker build -t $CI_REGISTRY/makabaka/book-admin-ui:latest .
+            docker push $CI_REGISTRY/makabaka/book-admin-ui:latest
   deploy:
     # This is an example deploy job, not actually used by the workflow
     docker:
