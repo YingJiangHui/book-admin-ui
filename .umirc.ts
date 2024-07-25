@@ -8,6 +8,7 @@ export default defineConfig({
   request: {
     // dataField: 'data',
   },
+  hash: true,
   layout: {
     title: '图书馆管理系统',
   },
