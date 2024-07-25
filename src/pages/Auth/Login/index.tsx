@@ -53,7 +53,7 @@ const Login: React.FC = () => {
             <img src={'/book.svg'} />
             // <BookTwoTone style={{ fontSize: 44, lineHeight: 44 }} size={36} />
           }
-          title="图书管理系统登录T"
+          title="图书管理系统登录"
           subTitle="图书馆管理后台"
         >
           <>
