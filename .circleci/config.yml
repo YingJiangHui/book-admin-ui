@@ -81,10 +81,10 @@ jobs:
           name: login server
           command: |
             ssh -o StrictHostKeyChecking=no root@ssh.makkapakka.cn << EOF
-            cd server
-            ls
-            exit
-
+              cd server
+              ls
+              exit
+            EOF
 workflows:
   build_and_deploy:
     jobs:
