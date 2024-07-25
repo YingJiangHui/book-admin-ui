@@ -80,7 +80,7 @@ jobs:
       - run:
           name: login server
           command: |
-            ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null book@$HOST_NAME <<EOF
+            ssh -o StrictHostKeyChecking=no root@ssh.makkapakka.cn
             cd server
             ls
             exit
