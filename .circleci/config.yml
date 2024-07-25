@@ -39,11 +39,10 @@ jobs:
           name: Copy artifacts
           command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
       - run:
-          name: Copy Dockerfile
-          command: cp Dockerfile ~/artifacts/
-      - run:
-          name: Copy nginx.conf
-          command: cp nginx.conf ~/artifacts/
+          name: Copy Config
+          command: | 
+            cp Dockerfile ~/artifacts/
+            cp nginx.conf ~/artifacts/
       - persist_to_workspace:
           root: ~/artifacts
           paths:
@@ -72,7 +71,7 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
-            docker build -t $CI_REGISTRY/makabaka/book-admin-ui:latest ~/workspace
+            cd ~/workspace && docker build -t $CI_REGISTRY/makabaka/book-admin-ui:latest .
   deploy:
     # This is an example deploy job, not actually used by the workflow
     executor: custom-executor
