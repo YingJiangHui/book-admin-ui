@@ -56,9 +56,12 @@ jobs:
           docker_layer_caching: true
       - attach_workspace:
           at: ~/workspace
-      - run :
+      - run:
           name: A
           command: ls
+      - run:
+          name: B
+          command: ls ~/workspace
       - run:
           name: Docker version
           command: docker -v
