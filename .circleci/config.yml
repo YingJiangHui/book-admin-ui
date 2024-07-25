@@ -57,7 +57,7 @@ jobs:
           at: ~/workspace
       - run:
           name: A
-          command: ls
+          command: ls ~/.ssh
       - run:
           name: B
           command: ls ~/workspace
