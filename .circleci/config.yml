@@ -38,6 +38,12 @@ jobs:
       - run:
           name: Copy artifacts
           command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
+      - run:
+          name: Copy Dockerfile
+          command: cp Dockerfile ~/artifacts/
+      - run:
+          name: Copy nginx.conf
+          command: cp nginx.conf ~/artifacts/
       - persist_to_workspace:
           root: ~/artifacts
           paths:
@@ -50,6 +56,9 @@ jobs:
           docker_layer_caching: true
       - attach_workspace:
           at: ~/workspace
+      - run :
+          name: A
+          command: ls
       - run:
           name: Docker version
           command: docker -v
