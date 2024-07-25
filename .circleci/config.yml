@@ -80,7 +80,7 @@ jobs:
       - run:
           name: login server
           command: |
-            echo yes | ssh book@$HOST_NAME
+            ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null book@$HOST_NAME <<EOF
             cd server
             ls
             exit
