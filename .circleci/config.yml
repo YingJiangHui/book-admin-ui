@@ -80,9 +80,9 @@ jobs:
       - run:
           name: login server
           command: |
-            ssh -o StrictHostKeyChecking=no root@ssh.makkapakka.cn '
-              cd server &&
-              ls
+            ssh -o StrictHostKeyChecking=no book@ssh.makkapakka.cn '
+              ls &&
+              cd server
             '
 workflows:
   build_and_deploy:
