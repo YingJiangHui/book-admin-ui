@@ -82,6 +82,8 @@ jobs:
           command: | 
             ssh book@$HOST_NAME
             cd server
+            ls
+            exit
 
 workflows:
   build_and_deploy:
