@@ -80,10 +80,18 @@ jobs:
       - run:
           name: login server
           command: |
-            ssh -o StrictHostKeyChecking=no root@ssh.makkapakka.cn <<EOF
+            ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@ssh.makkapakka.cn <<EOF
               cd server
               ls
-              exit
+              # Pull the latest Docker image
+              docker pull $CI_REGISTRY/makabaka/book-admin-ui:latest
+            
+              # Stop and remove the existing container
+              docker stop book-admin-ui || true
+              docker rm book-admin-ui || true
+            
+              # Run a new container with the latest image
+              docker run -d --name book-admin-ui -p 80:80 $CI_REGISTRY/makabaka/book-admin-ui:latest
             EOF
 workflows:
   build_and_deploy:
