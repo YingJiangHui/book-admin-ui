@@ -80,11 +80,13 @@ jobs:
     steps:
       # Replace this with steps to deploy to users
       - run:
-          name: login server
+          name: Login Server
           command: |
             ssh -o StrictHostKeyChecking=no book@ssh.makkapakka.cn '
               ls &&
-              cd server
+              cd server && 
+              docker pull $CI_REGISTRY/makabaka/book-admin-ui:latest &&
+              docker compose up -d
             '
 workflows:
   build_and_deploy:
