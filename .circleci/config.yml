@@ -57,14 +57,11 @@ jobs:
       - attach_workspace:
           at: ~/workspace
       - run:
-          name: Docker version
-          command: docker -v
-      - run:
           name: Docker Login
           command: |
             echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
       - run:
-          name: Build Docker Image
+          name: Push Docker Image
           command: |
             cd ~/workspace && docker build -t $CI_REGISTRY/makabaka/book-admin-ui:latest .
             docker push $CI_REGISTRY/makabaka/book-admin-ui:latest
@@ -81,7 +78,7 @@ jobs:
               ls &&
               cd server && 
               docker pull '"$CI_REGISTRY"'/makabaka/book-admin-ui:latest &&
-              docker compose up -d
+                docker compose up -d --no-deps --build book-admin-ui
             '
 workflows:
   build_and_deploy:
