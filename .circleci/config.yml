@@ -1,0 +1,92 @@
+# This config was automatically generated from your source code
+# Stacks detected: deps:node:.
+version: 2.1
+orbs:
+  node: circleci/node@5
+
+executors:
+  custom-executor:
+    docker:
+      - image: $CI_REGISTRY/makabaka/front-end-build-env:node-18
+        auth:
+          username: $CI_REGISTRY_USER
+          password: $CI_REGISTRY_PASSWORD  # context / project UI env-var reference
+
+jobs:
+  build-node:
+    # Build node project
+    executor: custom-executor
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-pnpm-cache-{{ checksum "pnpm-lock.yaml" }}
+            - v1-pnpm-cache-
+      - run:
+          name: Install dependencies
+          command: pnpm install
+      - save_cache:
+          paths:
+            - ~/.pnpm-store
+          key: v1-pnpm-cache-{{ checksum "pnpm-lock.yaml" }}
+      - run:
+          command: pnpm run build
+      - run:
+          name: Create the ~/artifacts directory if it doesn't exist
+          command: mkdir -p ~/artifacts
+      # Copy output to artifacts dir
+      - run:
+          name: Copy artifacts
+          command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
+      - run:
+          name: Copy Config
+          command: | 
+            cp Dockerfile ~/artifacts/
+            cp nginx.conf ~/artifacts/
+      - persist_to_workspace:
+          root: ~/artifacts
+          paths:
+            - .
+  build-docker-image:
+    docker:
+      - image: circleci/python:3.8  # 默认 CircleCI Docker 执行器
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - attach_workspace:
+          at: ~/workspace
+      - run:
+          name: Docker Login
+          command: |
+            echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+      - run:
+          name: Push Docker Image
+          command: |
+            cd ~/workspace && docker build -t $CI_REGISTRY/makabaka/book-admin-ui:latest .
+            docker push $CI_REGISTRY/makabaka/book-admin-ui:latest
+  deploy:
+    # This is an example deploy job, not actually used by the workflow
+    docker:
+      - image: circleci/python:3.8  # 默认 CircleCI Docker 执行器
+    steps:
+      # Replace this with steps to deploy to users
+      - run:
+          name: Login Server
+          command: |
+            ssh -o StrictHostKeyChecking=no book@ssh.makkapakka.cn '
+              ls &&
+              cd server && 
+              docker pull '"$CI_REGISTRY"'/makabaka/book-admin-ui:latest &&
+                docker compose up -d --no-deps --build book-admin-ui
+            '
+workflows:
+  build_and_deploy:
+    jobs:
+      - build-node
+      - build-docker-image:
+          requires:
+            - build-node
+      - deploy:
+          requires:
+            - build-docker-image
