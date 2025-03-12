@@ -23,8 +23,8 @@ export default defineConfig({
   links: [{ rel: 'icon', href: '/book.svg' }],
   scripts: [
     'https://webapi.amap.com/maps?v=2.0&key=afbb14d219ab8177546eae44a24daa91&plugin=AMap.Geocoder',
-    'https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js',
-    'https://cdn.jsdelivr.net/npm/echarts/map/js/china.js',
+    '/echarts.min.js',
+    '/china.js',
   ],
   externals: {
     AMap: 'window.AMap',
